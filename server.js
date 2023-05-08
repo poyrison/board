@@ -1,20 +1,49 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
-const address = 8080;
+const MongoClient = require("mongodb").MongoClient;
 
-app.listen(`${address}`, function () {
-  console.log("서버 오픈");
-});
+let db;
+let id_num = 0;
 
-app.get("/", function (req, res) {
+MongoClient.connect(
+  "mongodb+srv://admin:rlawnstlr12@poyrison.x9syqyy.mongodb.net/?retryWrites=true&w=majority",
+  { useUnifiedTopology: true },
+  function (err, client) {
+    if (err) return console.log(err);
+    // 연결되면 할 일
+    db = client.db("todoapp");
+
+    // db.collection("post").insertOne(
+    //   { _id: 0, 이름: "John", 나이: "20" },
+    //   function (err, res) {
+    //     console.log("저장 완료");
+    //   }
+    // );
+
+    app.listen(8080, () => {
+      console.log("서버 오픈");
+    });
+  }
+);
+
+app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/pet", function (req, res) {
-  res.send("펫 용품 사세요");
+app.get("/write", (req, res) => {
+  res.sendFile(__dirname + "/write.html");
 });
 
-app.get("/beauty", function (req, res) {
-  res.send("뷰티 용품 사세요");
+app.post("/add", (req, res) => {
+  res.send("전송 완료");
+  db.collection("post").insertOne(
+    { _id: `${id_num}`, name: req.body.title, date: req.body.date },
+    function () {
+      console.log("저장 완료");
+    }
+  );
+  id_num++;
 });
