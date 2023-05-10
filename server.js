@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+app.use("/public", express.static("public"));
 
 const MongoClient = require("mongodb").MongoClient;
 
@@ -24,24 +25,34 @@ MongoClient.connect(
 );
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.render("index.ejs");
 });
 
 app.get("/write", (req, res) => {
-  res.sendFile(__dirname + "/write.html");
+  res.render("write.ejs");
 });
 
 app.get("/list", (req, res) => {
   db.collection("post")
     .find()
     .toArray((err, result) => {
-      console.log(result);
+      // console.log(result);
       res.render("list.ejs", { posts: result });
     });
 });
 
+app.get("/detail/:id", (req, res) => {
+  db.collection("post").findOne(
+    { _id: parseInt(req.params.id) },
+    function (err, result) {
+      console.log(result);
+      res.render("detail.ejs", { posts: result });
+    }
+  );
+});
+
 app.post("/add", (req, res) => {
-  res.sendFile(__dirname + "/write.html");
+  res.sendFile(__dirname + "/write.ejs");
 
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     console.log(result.totalPost);
@@ -68,5 +79,6 @@ app.delete("/delete", (req, res) => {
   req.body._id = parseInt(req.body._id);
   db.collection("post").deleteOne(req.body, (err, result) => {
     err && console.log(err);
+    res.status(200).send({ message: "성공했습니다." });
   });
 });
