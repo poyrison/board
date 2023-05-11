@@ -46,3 +46,11 @@
 .modify_box {
   text-align: right;
 }
+
+.card-title {
+  text-align: center;
+  margin: 50px 0;
+}
+
+.navbar-nav {
+}
