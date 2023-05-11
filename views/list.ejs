@@ -12,31 +12,34 @@
       integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" src="/public/main.css" />
+    <link rel="stylesheet" href="/public/main.css" />
   </head>
   <body>
     <%- include('nav.html') %>
 
     <div class="container">
-      <ul class="list-group p-5" style="text-align: center">
-        <h2>계획</h2>
+      <ul class="list-group p-5">
         <% for(let i = 0; i < posts.length; i++){ %>
-        <a href="/detail/<%= posts[i]._id %>" style="text-decoration: none">
+        <a href="/detail/<%= posts[i]._id %>" id="link">
           <li
             class="list-group-item list-group-item-action list"
             data-id="<%= posts[i]._id %>"
-            style="cursor: pointer"
           >
-            <p>No. <%= posts[i]._id %></p>
-            <h4><%= posts[i].name %></h4>
-            <p><%= posts[i].date %></p>
-            <button
-              type="button"
-              class="btn btn-danger delete"
-              data-id="<%= posts[i]._id %>"
-            >
-              Delete
-            </button>
+            <div class="date_box">
+              <p class="list_no">No. <%= posts[i]._id %></p>
+              <div style="flex: 1"></div>
+              <p class="list_date"><%= posts[i].date %></p>
+            </div>
+            <h4 class="list_title"><%= posts[i].name %></h4>
+            <div class="btnBox">
+              <button
+                type="button"
+                class="btn btn-outline-danger delete"
+                data-id="<%= posts[i]._id %>"
+              >
+                삭제
+              </button>
+            </div>
           </li>
         </a>
         <hr />
@@ -47,22 +50,37 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script>
-      $(".delete").click(function (e) {
-        // arrow function으로 하면 fadeOut이 적용이 안됌
-        $.ajax({
-          method: "DELETE",
-          url: "/delete",
-          data: { _id: e.target.dataset.id },
-        })
-          .done((result) => {
-            $(this).parent("li").fadeOut();
-          })
-          .fail((err) => {
-            console.log(err);
-          });
+      $(".delete").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "정말 삭제하시겠습니까?",
+          // text: "Once deleted, you will not be able to recover this imaginary file!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              method: "DELETE",
+              url: "/delete",
+              data: { _id: e.target.dataset.id },
+            })
+              .done((result) => {
+                swal("삭제를 완료했습니다!", {
+                  icon: "success",
+                }).then((res) => {
+                  location.replace("/list");
+                });
+              })
+              .fail((err) => {
+                console.log(err);
+              });
+          }
+        });
       });
     </script>
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
       integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"

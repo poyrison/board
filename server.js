@@ -52,7 +52,7 @@ app.get("/detail/:id", (req, res) => {
 });
 
 app.post("/add", (req, res) => {
-  res.sendFile(__dirname + "/write.ejs");
+  res.render("write.ejs");
 
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     console.log(result.totalPost);

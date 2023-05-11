@@ -1,0 +1,48 @@
+.list-group {
+  text-align: center;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group .list_no {
+  text-align: left;
+}
+
+#link {
+  text-decoration: none;
+}
+
+.btnBox {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  margin: 5px 10px;
+}
+
+.list_no,
+.list_title,
+.list_date {
+  color: black;
+}
+
+.list_no,
+.list_date {
+  margin: 0;
+}
+
+.date_box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card {
+  width: 100%;
+}
+
+.modify_box {
+  text-align: right;
+}
