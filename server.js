@@ -37,7 +37,7 @@ app.get("/edit/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      res.render("edit.ejs", { post: result });
+      res.render("edit.ejs", { posts: result });
     }
   );
 });
