@@ -52,5 +52,6 @@
   margin: 50px 0;
 }
 
-.navbar-nav {
+.nav_area {
+  height: 56px;
 }

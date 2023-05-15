@@ -1,38 +1,51 @@
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.use("/public", express.static("public"));
-const methodOverride = require("method-override");
-app.use(methodOverride("_method"));
 const MongoClient = require("mongodb").MongoClient;
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+require("dotenv").config();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/public", express.static("public"));
+app.use(methodOverride("_method"));
+app.use(
+  session({ secret: "비밀코드", resave: true, saveUninitialized: false })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.set("view engine", "ejs");
 
 let db;
-const address = 8080;
 
 MongoClient.connect(
-  "mongodb+srv://admin:rlawnstlr12@poyrison.x9syqyy.mongodb.net/?retryWrites=true&w=majority",
+  process.env.DB_URL,
   { useUnifiedTopology: true },
   (err, client) => {
     if (err) return console.log(err);
     // 연결되면 할 일
     db = client.db("todoapp");
 
-    app.listen(`${address}`, () => {
-      console.log(`[ ${address} Server Open  ]`);
+    app.listen(process.env.PORT, () => {
+      console.log(`[ ${process.env.PORT} Server Open  ]`);
     });
   }
 );
 
+// =======  home  =======
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
+// =======  write  =======
 app.get("/write", (req, res) => {
   res.render("write.ejs");
 });
 
+// =======  edit  =======
 app.get("/edit/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
@@ -52,6 +65,7 @@ app.put("/edit", (req, res) => {
   );
 });
 
+// =======  list  =======
 app.get("/list", (req, res) => {
   db.collection("post")
     .find()
@@ -60,6 +74,7 @@ app.get("/list", (req, res) => {
     });
 });
 
+// =======  detail  =======
 app.get("/detail/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
@@ -69,6 +84,7 @@ app.get("/detail/:id", (req, res) => {
   );
 });
 
+// =======  add  =======
 app.post("/add", (req, res) => {
   res.render("write.ejs");
 
@@ -92,6 +108,89 @@ app.post("/add", (req, res) => {
   });
 });
 
+// =======  signup  =======
+app.get("/signup", (req, res) => {
+  res.render("signup.ejs");
+});
+
+app.post("/signup", (req, res) => {
+  res.render("login.ejs");
+
+  db.collection("login").insertOne(
+    { id: req.body.id, pw: req.body.pw, name: req.body.user_name },
+    () => {
+      console.log("============================");
+      console.log(`ID: ${req.body.id}`);
+      console.log(`PW: ${req.body.pw}`);
+      console.log(`Name: ${req.body.user_name}`);
+      console.log("저장 완료");
+      console.log("============================");
+    }
+  );
+});
+
+// =======  login  =======
+app.get("/login", (req, res) => {
+  res.render("login.ejs");
+});
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/fail",
+  }),
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id); // id를 이용해서 세션을 저장시키는 코드 (로그인 성공시 발동)
+});
+
+passport.deserializeUser((id, done) => {
+  db.collection("login").findOne({ id: id }, (err, result) => {
+    done(null, result);
+  });
+  // done(null, {}); // 해당 세션 데이터를 가진 사람을 DB에서 찾음 (마이페이지 접속시 발동)
+});
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "id",
+      passwordField: "pw",
+      session: true,
+      passReqToCallback: false,
+    },
+    (입력한아이디, 입력한비번, done) => {
+      console.log(입력한아이디, 입력한비번);
+      db.collection("login").findOne({ id: 입력한아이디 }, (err, result) => {
+        if (err) return done(에러);
+
+        if (!result)
+          return done(null, false, { message: "존재하지않는 아이디입니다." });
+        if (입력한비번 == result.pw) {
+          return done(null, result);
+        } else {
+          return done(null, false, { message: "패스워드를 확인해주세요" });
+        }
+      });
+    }
+  )
+);
+
+// =======  myPage  =======
+const loginCheck = (req, res, next) => {
+  req.user ? next() : res.send("로그인해주세요");
+};
+
+app.get("/myPage", loginCheck, (req, res) => {
+  console.log(req.user);
+  res.render("myPage.ejs", { user: req.user });
+});
+
+// =======  delete  =======
 app.delete("/delete", (req, res) => {
   console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
   req.body._id = parseInt(req.body._id);
