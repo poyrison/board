@@ -37,7 +37,7 @@
           <a class="nav-link" href="/myPage">마이페이지</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0" action="/search" method="POST">
+      <!-- <form class="form-inline my-2 my-lg-0">
         <input
           class="form-control mr-sm-2"
           type="search"
@@ -52,14 +52,7 @@
         >
           Search
         </button>
-      </form>
+      </form> -->
     </div>
   </nav>
 </div>
-
-<script>
-  $("#search").click(() => {
-    let inputValue = $("#search_input").val();
-    window.location.replace("/search?value=" + inputValue);
-  });
-</script>

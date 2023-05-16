@@ -199,3 +199,13 @@ app.delete("/delete", (req, res) => {
     res.status(200).send({ message: "성공했습니다." });
   });
 });
+
+// =======  search  =======
+app.get("/search", (req, res) => {
+  db.collection("post")
+    .find({ name: req.query.value })
+    .toArray((err, result) => {
+      console.log(result);
+      res.render("search.ejs", { posts: result });
+    });
+});
