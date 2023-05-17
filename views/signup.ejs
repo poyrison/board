@@ -37,9 +37,11 @@
                               type="text"
                               name="user_name"
                               class="form-style"
-                              placeholder="Your Full Name"
+                              placeholder="이름"
                               id="logname"
                               required
+                              minlength="1"
+                              maxlength="8"
                               autocomplete="off"
                             />
                             <i class="input-icon uil uil-user"></i>
@@ -49,9 +51,11 @@
                               type="text"
                               name="id"
                               class="form-style"
-                              placeholder="Your Id"
+                              placeholder="아이디"
                               id="logemail"
                               required
+                              minlength="1"
+                              maxlength="15"
                               autocomplete="off"
                             />
                             <i class="input-icon uil uil-at"></i>
@@ -61,9 +65,11 @@
                               type="password"
                               name="pw"
                               class="form-style"
-                              placeholder="Your Password"
+                              placeholder="비밀번호"
                               id="logpass"
                               required
+                              minlength="1"
+                              maxlength="15"
                               autocomplete="off"
                             />
                             <i class="input-icon uil uil-lock-alt"></i>
@@ -73,7 +79,7 @@
                             class="submit_btn mt-4"
                             id="signup_btn"
                           >
-                            submit
+                            회원가입
                           </button>
                         </form>
                       </div>

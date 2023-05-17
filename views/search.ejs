@@ -13,9 +13,19 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/public/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
   </head>
   <body>
     <%- include('nav.html') %>
+    <div class="input-group mb-2">
+      <input class="form-control" id="search_input" />
+      <button class="input-group-append btn btn-success" id="search">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
     <div class="container">
       <ul class="list-group p-5">
         <% for(let i = 0; i < posts.length; i++){ %>
@@ -31,6 +41,8 @@
             </div>
             <h4 class="list_title"><%= posts[i].name %></h4>
             <div class="btnBox">
+              <p class="list_writer">작성자: <%= posts[i].writer %></p>
+              <div style="flex: 1"></div>
               <button
                 type="button"
                 class="btn btn-outline-danger delete"

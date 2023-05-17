@@ -40,11 +40,6 @@ app.get("/", (req, res) => {
   res.render("index.ejs");
 });
 
-// =======  write  =======
-app.get("/write", (req, res) => {
-  res.render("write.ejs");
-});
-
 // =======  edit  =======
 app.get("/edit/:id", (req, res) => {
   db.collection("post").findOne(
@@ -80,51 +75,6 @@ app.get("/detail/:id", (req, res) => {
     { _id: parseInt(req.params.id) },
     function (err, result) {
       res.render("detail.ejs", { posts: result });
-    }
-  );
-});
-
-// =======  add  =======
-app.post("/add", (req, res) => {
-  res.render("write.ejs");
-
-  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-    console.log(result.totalPost);
-    let totalPost = result.totalPost;
-
-    db.collection("post").insertOne(
-      { _id: totalPost + 1, name: req.body.title, date: req.body.date },
-      () => {
-        console.log("저장 완료");
-        db.collection("counter").updateOne(
-          { name: "게시물갯수" },
-          { $inc: { totalPost: 1 } },
-          (err, result) => {
-            err && console.log(err);
-          }
-        );
-      }
-    );
-  });
-});
-
-// =======  signup  =======
-app.get("/signup", (req, res) => {
-  res.render("signup.ejs");
-});
-
-app.post("/signup", (req, res) => {
-  res.render("login.ejs");
-
-  db.collection("login").insertOne(
-    { id: req.body.id, pw: req.body.pw, name: req.body.user_name },
-    () => {
-      console.log("============================");
-      console.log(`ID: ${req.body.id}`);
-      console.log(`PW: ${req.body.pw}`);
-      console.log(`Name: ${req.body.user_name}`);
-      console.log("저장 완료");
-      console.log("============================");
     }
   );
 });
@@ -180,9 +130,81 @@ passport.use(
   )
 );
 
+// =======  signup  =======
+app.get("/signup", (req, res) => {
+  res.render("signup.ejs");
+});
+
+app.post("/signup", (req, res) => {
+  res.render("login.ejs");
+
+  db.collection("login").insertOne(
+    { id: req.body.id, pw: req.body.pw, name: req.body.user_name },
+    () => {
+      console.log("============================");
+      console.log(`ID: ${req.body.id}`);
+      console.log(`PW: ${req.body.pw}`);
+      console.log(`Name: ${req.body.user_name}`);
+      console.log("저장 완료");
+      console.log("============================");
+    }
+  );
+});
+
+// =======  add  =======
+app.post("/add", (req, res) => {
+  res.render("write.ejs");
+
+  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
+    console.log(result.totalPost);
+    let totalPost = result.totalPost;
+
+    let saveItem = {
+      _id: totalPost + 1,
+      name: req.body.title,
+      date: req.body.date,
+      writer: req.user.name,
+    };
+
+    db.collection("post").insertOne(saveItem, () => {
+      console.log("저장 완료");
+      db.collection("counter").updateOne(
+        { name: "게시물갯수" },
+        { $inc: { totalPost: 1 } },
+        (err, result) => {
+          err && console.log(err);
+        }
+      );
+    });
+  });
+});
+
+// =======  delete  =======
+app.delete("/delete", (req, res) => {
+  req.body._id = parseInt(req.body._id);
+
+  let deleteItem = { _id: req.body._id, writer: req.user.name };
+
+  db.collection("post").deleteOne(deleteItem, (err, result) => {
+    err &&
+      res.render(
+        "<script>alert('해당 글의 작성자만 삭제가 가능합니다.')</script>"
+      );
+    res.status(200).send({ message: "성공했습니다." });
+  });
+  console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+});
+
 // =======  myPage  =======
 const loginCheck = (req, res, next) => {
-  req.user ? next() : res.send("로그인해주세요");
+  if (req.user) {
+    next();
+  } else {
+    res.send(
+      // history.back(); // 이전 페이지
+      "<script>alert('로그인을 해주세요');location.href='/login';</script>"
+    );
+  }
 };
 
 app.get("/myPage", loginCheck, (req, res) => {
@@ -190,20 +212,29 @@ app.get("/myPage", loginCheck, (req, res) => {
   res.render("myPage.ejs", { user: req.user });
 });
 
-// =======  delete  =======
-app.delete("/delete", (req, res) => {
-  console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
-  req.body._id = parseInt(req.body._id);
-  db.collection("post").deleteOne(req.body, (err, result) => {
-    err && console.log(err);
-    res.status(200).send({ message: "성공했습니다." });
-  });
+// =======  write  =======
+app.get("/write", loginCheck, (req, res) => {
+  res.render("write.ejs");
 });
 
 // =======  search  =======
 app.get("/search", (req, res) => {
+  // test1처럼 붙여서 쓰면 검색해도 나오지 않음 test 1이라고 해야 나옴
+  let searchCondition = [
+    {
+      $search: {
+        index: "titleSearch",
+        text: {
+          query: req.query.value,
+          path: "name", // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+        },
+      },
+    },
+    // {$sort : {_id:-1}}, //_id:1 오름차순으로 결과 출력 -1은 내림차순 결과 출력
+    // {$limit : 2},
+  ];
   db.collection("post")
-    .find({ name: req.query.value })
+    .aggregate(searchCondition)
     .toArray((err, result) => {
       console.log(result);
       res.render("search.ejs", { posts: result });
