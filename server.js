@@ -214,7 +214,7 @@ app.get("/myPage", loginCheck, (req, res) => {
 
 // =======  write  =======
 app.get("/write", loginCheck, (req, res) => {
-  res.render("write.ejs");
+  res.render("write.ejs", { user: req.user });
 });
 
 // =======  search  =======
@@ -240,3 +240,5 @@ app.get("/search", (req, res) => {
       res.render("search.ejs", { posts: result });
     });
 });
+
+app.use("/shop", require("./routes/shop"));

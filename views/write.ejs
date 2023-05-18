@@ -18,6 +18,15 @@
     <div class="container">
       <form action="/add" method="POST">
         <div class="form-group">
+          <label>작성자</label>
+          <input
+            type="text"
+            class="form-control"
+            name="writer"
+            id="write_writer"
+            value="<%= user.name %>"
+            disabled
+          />
           <label>오늘의 할 일</label>
           <input
             type="text"
@@ -35,6 +44,9 @@
     </div>
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script>
+      let writer = $("#write_writer").val();
+    </script> -->
     <script
       src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
       integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

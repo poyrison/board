@@ -35,21 +35,17 @@
             data-id="<%= posts[i]._id %>"
           >
             <div class="date_box">
-              <p class="list_no">No. <%= posts[i]._id %></p>
-              <div style="flex: 1"></div>
-              <p class="list_date"><%= posts[i].date %></p>
+              <div>
+                <p class="list_no">No. <%= posts[i]._id %></p>
+              </div>
+              <div>
+                <p class="list_date"><%= posts[i].date %></p>
+              </div>
             </div>
             <h4 class="list_title"><%= posts[i].name %></h4>
             <div class="btnBox">
               <p class="list_writer">작성자: <%= posts[i].writer %></p>
-              <div style="flex: 1"></div>
-              <button
-                type="button"
-                class="btn btn-outline-danger delete"
-                data-id="<%= posts[i]._id %>"
-              >
-                삭제
-              </button>
+              <!-- <div style="flex: 1"></div> -->
             </div>
           </li>
         </a>

@@ -25,11 +25,25 @@
         <h4 class="text-center">상세 페이지</h4>
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title"><%= posts.name %></h5>
             <h6 class="card-subtitle mb-2 text-muted"><%= posts.date %></h6>
+            <h5 class="card-title"><%= posts.name %></h5>
             <!-- <p class="card-text">test</p> -->
             <div class="modify_box">
-              <a href="/edit/<%= posts._id %>" class="card-link">수정하기</a>
+              <div>
+                <p class="list_writer">작성자: <%= posts.writer %></p>
+              </div>
+              <div>
+                <a href="/edit/<%= posts._id %>" class="btn btn-outline-primary"
+                  >수정하기</a
+                >
+                <button
+                  type="button"
+                  class="btn btn-outline-danger delete"
+                  data-id="<%= posts._id %>"
+                >
+                  삭제
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -37,6 +51,37 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(".delete").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "정말 삭제하시겠습니까?",
+          // text: "Once deleted, you will not be able to recover this imaginary file!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              method: "DELETE",
+              url: "/delete",
+              data: { _id: e.target.dataset.id },
+            })
+              .done((result) => {
+                swal("삭제를 완료했습니다!", {
+                  icon: "success",
+                }).then((res) => {
+                  location.replace("/list");
+                });
+              })
+              .fail((err) => {
+                console.log(err);
+              });
+          }
+        });
+      });
+    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
       integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
