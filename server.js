@@ -21,6 +21,18 @@ app.set("view engine", "ejs");
 
 let db;
 
+let multer = require("multer");
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public/image"); // 저장할 파일을 보낼 경로
+  },
+  filename: (erq, file, cb) => {
+    cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
+  },
+});
+
+let upload = multer({ storage: storage });
+
 MongoClient.connect(
   process.env.DB_URL,
   { useUnifiedTopology: true },
@@ -242,3 +254,14 @@ app.get("/search", (req, res) => {
 });
 
 app.use("/shop", require("./routes/shop"));
+
+// =======  upload  =======
+const Upload = () => {};
+
+app.get("/upload", (req, res) => {
+  res.render("upload.ejs");
+});
+
+app.post("/upload", upload.single("profile"), (req, res) => {
+  res.send("<script>alert('업로드 완료');location.href='/list'</script>");
+});
