@@ -7,6 +7,21 @@ body {
   height: 100vh;
 }
 
+.flex {
+  display: flex;
+}
+
+.container {
+  height: 90vh;
+}
+
+.form-group {
+  align-items: center;
+}
+.form-group label {
+  margin-top: 30px;
+}
+
 .list-group {
   text-align: center;
 }
@@ -36,6 +51,9 @@ body {
 .list_title,
 .list_date {
   color: black;
+}
+.list_no {
+  font-size: 12px;
 }
 
 /* .list_no,
@@ -76,10 +94,20 @@ body {
   width: 100%;
   padding: 0 30vw;
   margin: 0;
-  position: sticky;
-  top: 66px;
+  top: 20px;
   z-index: 1000;
 }
 .input-group-append {
   margin-top: 0;
+}
+
+.write_submit_btn {
+  justify-content: flex-end;
+}
+.write_submit_btn button {
+  margin: 0;
+}
+#write_content {
+  width: 100%;
+  height: 500px;
 }

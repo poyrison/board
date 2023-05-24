@@ -76,6 +76,11 @@
               })
               .fail((err) => {
                 console.log(err);
+                swal("삭제를 완료했습니다!", {
+                  icon: "warning",
+                }).then((res) => {
+                  location.replace(`/list/${e.target.dataset.id}`);
+                });
               });
           }
         });

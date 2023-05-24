@@ -33,6 +33,12 @@ let storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth() + 1;
+const day = date.getDate();
+const todayDate = `${year}.${month}.${day}`;
+
 MongoClient.connect(
   process.env.DB_URL,
   { useUnifiedTopology: true },
@@ -65,7 +71,7 @@ app.get("/edit/:id", (req, res) => {
 app.put("/edit", (req, res) => {
   db.collection("post").updateOne(
     { _id: parseInt(req.body.id) },
-    { $set: { title: req.body.title, date: req.body.date } },
+    { $set: { title: req.body.title, date: todayDate } },
     (err, result) => {
       res.redirect("/list");
     }
@@ -165,8 +171,9 @@ app.post("/signup", (req, res) => {
 
 // =======  add  =======
 app.post("/add", (req, res) => {
-  res.render("write.ejs");
-
+  res.send(
+    "<script>alert('게시물이 작성되었습니다.');location.href='/list';</script>"
+  );
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     console.log(result.totalPost);
     let totalPost = result.totalPost;
@@ -174,7 +181,7 @@ app.post("/add", (req, res) => {
     let saveItem = {
       _id: totalPost + 1,
       name: req.body.title,
-      date: req.body.date,
+      date: todayDate,
       writer: req.user.name,
     };
 
@@ -199,7 +206,7 @@ app.delete("/delete", (req, res) => {
 
   db.collection("post").deleteOne(deleteItem, (err, result) => {
     err &&
-      res.render(
+      res.send(
         "<script>alert('해당 글의 작성자만 삭제가 가능합니다.')</script>"
       );
     res.status(200).send({ message: "성공했습니다." });
@@ -226,7 +233,7 @@ app.get("/myPage", loginCheck, (req, res) => {
 
 // =======  write  =======
 app.get("/write", loginCheck, (req, res) => {
-  res.render("write.ejs", { user: req.user });
+  res.render("write.ejs");
 });
 
 // =======  search  =======
@@ -256,12 +263,15 @@ app.get("/search", (req, res) => {
 app.use("/shop", require("./routes/shop"));
 
 // =======  upload  =======
-const Upload = () => {};
-
 app.get("/upload", (req, res) => {
   res.render("upload.ejs");
 });
 
 app.post("/upload", upload.single("profile"), (req, res) => {
+  // 파일을 여러개 업로드 하고싶으면 upload.array("profile", 5 //최대 업로드 갯수 설정)
   res.send("<script>alert('업로드 완료');location.href='/list'</script>");
+});
+
+app.get("/image/:imageName", (req, res) => {
+  res.sendFile(__dirname + "public/image/" + req.params.imageName);
 });

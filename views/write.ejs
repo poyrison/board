@@ -12,34 +12,31 @@
       integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="/public/main.css" />
   </head>
   <body>
     <%- include('nav.html') %>
     <div class="container">
       <form action="/add" method="POST">
         <div class="form-group">
-          <label>작성자</label>
-          <input
-            type="text"
-            class="form-control"
-            name="writer"
-            id="write_writer"
-            value="<%= user.name %>"
-            disabled
-          />
-          <label>오늘의 할 일</label>
+          <label>제목</label>
           <input
             type="text"
             class="form-control"
             name="title"
             id="write_title"
           />
+          <label>내용</label>
+          <textarea
+            type="text"
+            class="form-control"
+            name="content"
+            id="write_content"
+          ></textarea>
         </div>
-        <div class="form-group">
-          <label>날짜</label>
-          <input type="date" class="form-control" name="date" id="write_date" />
+        <div class="flex write_submit_btn">
+          <button type="submit" class="btn btn-danger">작성</button>
         </div>
-        <button type="submit" class="btn btn-danger">작성</button>
       </form>
     </div>
 
