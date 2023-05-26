@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= posts._id %>번 게시물</title>
+    <title><%= posts.name %></title>
     <!-- 부트스트랩 -->
     <link
       rel="stylesheet"
@@ -19,31 +19,37 @@
     ></script>
   </head>
   <body>
-    <%- include('nav.html') %>
-    <div class="container">
-      <div class="nav_area">
-        <h4 class="text-center">상세 페이지</h4>
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-subtitle mb-2 text-muted"><%= posts.date %></h6>
-            <h5 class="card-title"><%= posts.name %></h5>
-            <!-- <p class="card-text">test</p> -->
-            <div class="modify_box">
-              <div>
-                <p class="list_writer">작성자: <%= posts.writer %></p>
-              </div>
-              <div>
-                <a href="/edit/<%= posts._id %>" class="btn btn-outline-primary"
-                  >수정하기</a
-                >
-                <button
-                  type="button"
-                  class="btn btn-outline-danger delete"
-                  data-id="<%= posts._id %>"
-                >
-                  삭제
-                </button>
-              </div>
+    <%- include('nav.ejs') %>
+    <div class="container flex">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= posts.name %></h5>
+          <div class="detail_head">
+            <span class="detail_writer text-muted"
+              >작성자: <%= posts.writer %></span
+            >
+            <span class="detail_date mb-2 text-muted"><%= posts.date %></span>
+          </div>
+          <hr />
+          <div class="content_box">
+            <p class="card-text"><%= posts.content %></p>
+            <img
+              src="../public/image/<%= posts.upload %>"
+              alt="<%= posts.upload %>"
+            />
+          </div>
+          <div class="modify_box">
+            <div>
+              <a href="/edit/<%= posts._id %>" class="btn btn-outline-primary"
+                >수정하기</a
+              >
+              <button
+                type="button"
+                class="btn btn-outline-danger delete"
+                data-id="<%= posts._id %>"
+              >
+                삭제
+              </button>
             </div>
           </div>
         </div>
@@ -76,10 +82,10 @@
               })
               .fail((err) => {
                 console.log(err);
-                swal("삭제를 완료했습니다!", {
+                swal("본인의 게시물이 아닙니다.", {
                   icon: "warning",
                 }).then((res) => {
-                  location.replace(`/list/${e.target.dataset.id}`);
+                  location.replace(`/detail/${e.target.dataset.id}`);
                 });
               });
           }

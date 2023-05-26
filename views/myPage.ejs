@@ -14,8 +14,9 @@
     />
   </head>
   <body>
-    <%- include('nav.html') %>
+    <%- include('nav.ejs') %>
     <p><%= user.name %>의 마이페이지입니다.</p>
+    <button class="btn btn-danger">로그아웃</button>
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

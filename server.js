@@ -4,8 +4,10 @@ const app = express();
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 const passport = require("passport");
+const path = require("path");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
+const fs = require("fs");
 require("dotenv").config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,23 +23,32 @@ app.set("view engine", "ejs");
 
 let db;
 
-let multer = require("multer");
-let storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/image"); // 저장할 파일을 보낼 경로
-  },
-  filename: (erq, file, cb) => {
-    cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
-  },
-});
-
-let upload = multer({ storage: storage });
-
+// 날짜
 const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
+const hour = date.getHours();
+const minute = date.getMinutes();
+const second = date.getSeconds();
 const todayDate = `${year}.${month}.${day}`;
+const uploadTime = `${year}${month}${day}${hour}${minute}${second}`;
+const lastTime = `${hour}${minute}${second}`;
+
+let multer = require("multer");
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // cb = callback
+    cb(null, "./public/image"); // 저장할 파일을 보낼 경로
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname); // 확장자명(.png, .jpg, .jpeg등)
+    cb(null, path.basename(file.originalname, ext) + uploadTime + ext);
+    // cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
+  },
+});
+
+let upload = multer({ storage: storage });
 
 MongoClient.connect(
   process.env.DB_URL,
@@ -52,6 +63,17 @@ MongoClient.connect(
     });
   }
 );
+
+const loginCheck = (req, res, next) => {
+  if (req.user) {
+    next();
+  } else {
+    res.send(
+      // history.back(); // 이전 페이지
+      "<script>alert('로그인을 해주세요');location.href='/login';</script>"
+    );
+  }
+};
 
 // =======  home  =======
 app.get("/", (req, res) => {
@@ -105,7 +127,7 @@ app.get("/login", (req, res) => {
 app.post(
   "/login",
   passport.authenticate("local", {
-    failureRedirect: "/fail",
+    failureRedirect: "/login",
   }),
   (req, res) => {
     res.redirect("/");
@@ -132,7 +154,6 @@ passport.use(
       passReqToCallback: false,
     },
     (입력한아이디, 입력한비번, done) => {
-      console.log(입력한아이디, 입력한비번);
       db.collection("login").findOne({ id: 입력한아이디 }, (err, result) => {
         if (err) return done(에러);
 
@@ -170,7 +191,8 @@ app.post("/signup", (req, res) => {
 });
 
 // =======  add  =======
-app.post("/add", (req, res) => {
+app.post("/add", upload.single("profile"), (req, res) => {
+  console.log(req.file.filename);
   res.send(
     "<script>alert('게시물이 작성되었습니다.');location.href='/list';</script>"
   );
@@ -180,9 +202,14 @@ app.post("/add", (req, res) => {
 
     let saveItem = {
       _id: totalPost + 1,
-      name: req.body.title,
-      date: todayDate,
       writer: req.user.name,
+      date: todayDate,
+      // date: Date.now(),
+      name: req.body.title,
+      content: req.body.content,
+      upload:
+        path.basename(req.file.filename, path.extname(req.file.filename)) +
+        path.extname(req.file.filename),
     };
 
     db.collection("post").insertOne(saveItem, () => {
@@ -191,43 +218,44 @@ app.post("/add", (req, res) => {
         { name: "게시물갯수" },
         { $inc: { totalPost: 1 } },
         (err, result) => {
-          err && console.log(err);
+          if (err) throw err;
         }
       );
     });
   });
 });
+// 파일을 여러개 업로드 하고싶으면 upload.array("profile", 5 //최대 업로드 갯수 설정)
+
+app.get("/image/:imageName", (req, res) => {
+  res.sendFile(__dirname + "public/image/" + req.params.imageName);
+});
 
 // =======  delete  =======
 app.delete("/delete", (req, res) => {
+  // console.log(req.body._id);
+
   req.body._id = parseInt(req.body._id);
+
+  fs.unlink(`./public/image/ct2023526224159.gif`, (err) => {
+    try {
+      if (err) throw new Error();
+      console.log(`ct2023526224159.gif 삭제`);
+    } catch (e) {
+      console.log(e.message);
+    }
+  });
 
   let deleteItem = { _id: req.body._id, writer: req.user.name };
 
   db.collection("post").deleteOne(deleteItem, (err, result) => {
-    err &&
-      res.send(
-        "<script>alert('해당 글의 작성자만 삭제가 가능합니다.')</script>"
-      );
-    res.status(200).send({ message: "성공했습니다." });
+    console.log(req.body.filename);
   });
+  // res.status(200).send({ message: "성공했습니다." });
   console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
 });
 
 // =======  myPage  =======
-const loginCheck = (req, res, next) => {
-  if (req.user) {
-    next();
-  } else {
-    res.send(
-      // history.back(); // 이전 페이지
-      "<script>alert('로그인을 해주세요');location.href='/login';</script>"
-    );
-  }
-};
-
 app.get("/myPage", loginCheck, (req, res) => {
-  console.log(req.user);
   res.render("myPage.ejs", { user: req.user });
 });
 
@@ -256,22 +284,8 @@ app.get("/search", (req, res) => {
     .aggregate(searchCondition)
     .toArray((err, result) => {
       console.log(result);
-      res.render("search.ejs", { posts: result });
+      res.render("search.ejs", { posts: result }, { login: result });
     });
 });
 
 app.use("/shop", require("./routes/shop"));
-
-// =======  upload  =======
-app.get("/upload", (req, res) => {
-  res.render("upload.ejs");
-});
-
-app.post("/upload", upload.single("profile"), (req, res) => {
-  // 파일을 여러개 업로드 하고싶으면 upload.array("profile", 5 //최대 업로드 갯수 설정)
-  res.send("<script>alert('업로드 완료');location.href='/list'</script>");
-});
-
-app.get("/image/:imageName", (req, res) => {
-  res.sendFile(__dirname + "public/image/" + req.params.imageName);
-});

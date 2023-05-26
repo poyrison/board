@@ -1,0 +1,66 @@
+<div class="nav_area" style="height: 56px">
+  <nav
+    class="navbar navbar-expand-lg navbar-light bg-light"
+    style="position: fixed; width: 100%; z-index: 9999; padding: 8px 80px"
+  >
+    <a class="navbar-brand" href="/">게시판</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/write">Write</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/list">List</a>
+        </li>
+      </ul>
+      <div style="flex: 1"></div>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            user
+          </a>
+          <div class="dropdown-menu">
+            <a class="nav-link" href="/login">로그인</a>
+            <a class="nav-link" href="/signUp">회원가입</a>
+            <a class="dropdown-item nav-link" href="/myPage">마이페이지</a>
+            <a class="dropdown-item nav-link" href="/logout">로그아웃</a>
+          </div>
+        </li>
+      </ul>
+      <!-- <form class="form-inline my-2 my-lg-0">
+        <input
+          class="form-control mr-sm-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          id="search_input"
+        />
+        <button
+          class="btn btn-outline-success my-2 my-sm-0"
+          type="submit"
+          id="search"
+        >
+          Search
+        </button>
+      </form> -->
+    </div>
+  </nav>
+</div>
