@@ -122,6 +122,11 @@ body {
   height: 500px;
 }
 
+.edit_content {
+  width: 100%;
+  height: 500px;
+}
+
 .content_box {
   padding: 30px;
   margin-bottom: 50px;

@@ -36,17 +36,22 @@
             <img
               src="../public/image/<%= posts.upload %>"
               alt="<%= posts.upload %>"
+              style="max-width: 800px; max-height: 800px"
             />
           </div>
           <div class="modify_box">
             <div>
-              <a href="/edit/<%= posts._id %>" class="btn btn-outline-primary"
+              <a
+                href="/edit/<%= posts._id %>"
+                class="btn btn-outline-primary modify"
+                data-id="<%= posts._id %>"
                 >수정하기</a
               >
               <button
                 type="button"
                 class="btn btn-outline-danger delete"
                 data-id="<%= posts._id %>"
+                data-value="<%= posts.writer %>"
               >
                 삭제
               </button>
@@ -58,11 +63,12 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
+      let input = document.querySelector(".delete");
+      console.log(input.dataset);
       $(".delete").click((e) => {
         e.preventDefault();
         swal({
           title: "정말 삭제하시겠습니까?",
-          // text: "Once deleted, you will not be able to recover this imaginary file!",
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -71,21 +77,57 @@
             $.ajax({
               method: "DELETE",
               url: "/delete",
-              data: { _id: e.target.dataset.id },
+              data: {
+                // _id: e.target.dataset.writer,
+                value: e.target.dataset.writer,
+              },
             })
               .done((result) => {
                 swal("삭제를 완료했습니다!", {
                   icon: "success",
                 }).then((res) => {
-                  location.replace("/list");
+                  console.log("삭제 완료");
+                  location.replace("/");
                 });
+                location.replace("/");
+              })
+              .fail((err) => {
+                swal("본인의 게시물이 아닙니다.", {
+                  icon: "warning",
+                }).then((res) => {
+                  // location.replace(`/detail/${e.target.dataset.id}`);
+                  return false;
+                });
+              });
+          }
+        });
+      });
+      $(".modify").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "수정하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              method: "GET",
+              url: `/edit/${e.target.dataset.id}`,
+              data: {
+                _id: e.target.dataset.id,
+              },
+            })
+              .done((result) => {
+                location.replace(`/edit/${e.target.dataset.id}`);
               })
               .fail((err) => {
                 console.log(err);
                 swal("본인의 게시물이 아닙니다.", {
                   icon: "warning",
                 }).then((res) => {
-                  location.replace(`/detail/${e.target.dataset.id}`);
+                  // location.replace(`/detail/${e.target.dataset.id}`);
+                  return false;
                 });
               });
           }

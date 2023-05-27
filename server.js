@@ -36,6 +36,7 @@ const uploadTime = `${year}${month}${day}${hour}${minute}${second}`;
 const lastTime = `${hour}${minute}${second}`;
 
 let multer = require("multer");
+
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // cb = callback
@@ -70,22 +71,26 @@ const loginCheck = (req, res, next) => {
   } else {
     res.send(
       // history.back(); // 이전 페이지
-      "<script>alert('로그인을 해주세요');location.href='/login';</script>"
+      `<script>alert('로그인 후 이용가능합니다.');location.href='/login';</script>`
     );
   }
 };
 
 // =======  home  =======
 app.get("/", (req, res) => {
-  res.render("index.ejs");
+  db.collection("post")
+    .find()
+    .toArray((err, result) => {
+      res.render("index.ejs", { posts: result });
+    });
 });
 
 // =======  edit  =======
-app.get("/edit/:id", (req, res) => {
+app.get("/edit/:id", loginCheck, (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      res.render("edit.ejs", { posts: result });
+      res.render("edit.ejs", { posts: result, user: req.user });
     }
   );
 });
@@ -93,20 +98,11 @@ app.get("/edit/:id", (req, res) => {
 app.put("/edit", (req, res) => {
   db.collection("post").updateOne(
     { _id: parseInt(req.body.id) },
-    { $set: { title: req.body.title, date: todayDate } },
+    { $set: { content: req.body.title, date: todayDate } },
     (err, result) => {
-      res.redirect("/list");
+      res.redirect(`/detail/${req.body.id}`);
     }
   );
-});
-
-// =======  list  =======
-app.get("/list", (req, res) => {
-  db.collection("post")
-    .find()
-    .toArray((err, result) => {
-      res.render("list.ejs", { posts: result });
-    });
 });
 
 // =======  detail  =======
@@ -192,37 +188,66 @@ app.post("/signup", (req, res) => {
 
 // =======  add  =======
 app.post("/add", upload.single("profile"), (req, res) => {
-  console.log(req.file.filename);
-  res.send(
-    "<script>alert('게시물이 작성되었습니다.');location.href='/list';</script>"
-  );
-  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-    console.log(result.totalPost);
-    let totalPost = result.totalPost;
+  // res.send(
+  //   "<script>alert('게시물이 작성되었습니다.');location.href='/';</script>"
+  // );
+  if (req.file) {
+    db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
+      console.log(result.totalPost);
+      let totalPost = result.totalPost;
+      const fileName = req.file.filename;
 
-    let saveItem = {
-      _id: totalPost + 1,
-      writer: req.user.name,
-      date: todayDate,
-      // date: Date.now(),
-      name: req.body.title,
-      content: req.body.content,
-      upload:
-        path.basename(req.file.filename, path.extname(req.file.filename)) +
-        path.extname(req.file.filename),
-    };
+      let saveItem = {
+        _id: totalPost + 1,
+        writer: req.user.name,
+        date: todayDate,
+        // date: Date.now(),
+        name: req.body.title,
+        content: req.body.content,
+        upload:
+          path.basename(fileName, path.extname(fileName)) +
+          path.extname(fileName),
+      };
 
-    db.collection("post").insertOne(saveItem, () => {
-      console.log("저장 완료");
-      db.collection("counter").updateOne(
-        { name: "게시물갯수" },
-        { $inc: { totalPost: 1 } },
-        (err, result) => {
-          if (err) throw err;
-        }
-      );
+      console.log(req.file.filename);
+      db.collection("post").insertOne(saveItem, () => {
+        console.log("저장 완료");
+        db.collection("counter").updateOne(
+          { name: "게시물갯수" },
+          { $inc: { totalPost: 1 } },
+          (err, result) => {
+            if (err) throw err;
+          }
+        );
+      });
     });
-  });
+  } else {
+    db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
+      console.log(result.totalPost);
+      let totalPost = result.totalPost;
+
+      let saveItem = {
+        _id: totalPost + 1,
+        writer: req.user.name,
+        date: todayDate,
+        // date: Date.now(),
+        name: req.body.title,
+        content: req.body.content,
+        upload: null,
+      };
+
+      db.collection("post").insertOne(saveItem, () => {
+        console.log("저장 완료");
+        db.collection("counter").updateOne(
+          { name: "게시물갯수" },
+          { $inc: { totalPost: 1 } },
+          (err, result) => {
+            if (err) throw err;
+          }
+        );
+      });
+    });
+  }
 });
 // 파일을 여러개 업로드 하고싶으면 upload.array("profile", 5 //최대 업로드 갯수 설정)
 
@@ -232,24 +257,20 @@ app.get("/image/:imageName", (req, res) => {
 
 // =======  delete  =======
 app.delete("/delete", (req, res) => {
-  // console.log(req.body._id);
-
   req.body._id = parseInt(req.body._id);
 
-  fs.unlink(`./public/image/ct2023526224159.gif`, (err) => {
-    try {
-      if (err) throw new Error();
-      console.log(`ct2023526224159.gif 삭제`);
-    } catch (e) {
-      console.log(e.message);
-    }
-  });
+  // fs.unlink(`./public/image/${req.body.upload}`, (err) => {
+  //   try {
+  //     if (err) throw new Error();
+  //     console.log(`${req.body.upload} 삭제`);
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   }
+  // });
 
-  let deleteItem = { _id: req.body._id, writer: req.user.name };
-
-  db.collection("post").deleteOne(deleteItem, (err, result) => {
-    console.log(req.body.filename);
-  });
+  let deleteItem = { value: req.body.value, writer: req.user.name };
+  console.log(deleteItem);
+  db.collection("post").deleteOne(deleteItem, (err, result) => {});
   // res.status(200).send({ message: "성공했습니다." });
   console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
 });
