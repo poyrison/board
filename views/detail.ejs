@@ -65,8 +65,8 @@
     <script>
       let input = document.querySelector(".delete");
       console.log(input.dataset);
+      console.log();
       $(".delete").click((e) => {
-        e.preventDefault();
         swal({
           title: "정말 삭제하시겠습니까?",
           icon: "warning",
@@ -78,61 +78,105 @@
               method: "DELETE",
               url: "/delete",
               data: {
-                // _id: e.target.dataset.writer,
                 value: e.target.dataset.writer,
               },
-            })
-              .done((result) => {
-                swal("삭제를 완료했습니다!", {
-                  icon: "success",
-                }).then((res) => {
-                  console.log("삭제 완료");
-                  location.replace("/");
-                });
+            }).done(
+              swal("삭제를 완료했습니다!", {
+                icon: "success",
+              }).then((res) => {
+                console.log("삭제 완료");
                 location.replace("/");
               })
-              .fail((err) => {
-                swal("본인의 게시물이 아닙니다.", {
-                  icon: "warning",
-                }).then((res) => {
-                  // location.replace(`/detail/${e.target.dataset.id}`);
-                  return false;
-                });
-              });
+            );
           }
         });
       });
       $(".modify").click((e) => {
-        e.preventDefault();
         swal({
           title: "수정하시겠습니까?",
           icon: "warning",
           buttons: true,
           dangerMode: true,
-        }).then((willDelete) => {
-          if (willDelete) {
+        }).then((willModify) => {
+          if (willModify) {
             $.ajax({
               method: "GET",
               url: `/edit/${e.target.dataset.id}`,
               data: {
                 _id: e.target.dataset.id,
               },
-            })
-              .done((result) => {
-                location.replace(`/edit/${e.target.dataset.id}`);
-              })
-              .fail((err) => {
-                console.log(err);
-                swal("본인의 게시물이 아닙니다.", {
-                  icon: "warning",
-                }).then((res) => {
-                  // location.replace(`/detail/${e.target.dataset.id}`);
-                  return false;
-                });
-              });
+            });
           }
         });
       });
+      // $(".delete").click((e) => {
+      //   e.preventDefault();
+      // swal({
+      //   title: "정말 삭제하시겠습니까?",
+      //   icon: "warning",
+      //   buttons: true,
+      //   dangerMode: true,
+      // }).then((willDelete) => {
+      //     if (willDelete) {
+      //       $.ajax({
+      //         method: "DELETE",
+      //         url: "/delete",
+      //         data: {
+      //           // _id: e.target.dataset.writer,
+      //           value: e.target.dataset.writer,
+      //         },
+      //       })
+      //         .done((result) => {
+      // swal("삭제를 완료했습니다!", {
+      //   icon: "success",
+      // }).then((res) => {
+      //   console.log("삭제 완료");
+      //   location.replace("/");
+      // });
+      //           location.replace("/");
+      //         })
+      //         .fail((err) => {
+      // swal("본인의 게시물이 아닙니다.", {
+      //   icon: "warning",
+      // }).then((res) => {
+      //   // location.replace(`/detail/${e.target.dataset.id}`);
+      //   return false;
+      // });
+      //         });
+      //     }
+      //   });
+      // });
+      // $(".modify").click((e) => {
+      //   e.preventDefault();
+      //   swal({
+      //     title: "수정하시겠습니까?",
+      //     icon: "warning",
+      //     buttons: true,
+      //     dangerMode: true,
+      //   }).then((willDelete) => {
+      //     if (willDelete) {
+      //       $.ajax({
+      //         method: "GET",
+      //         url: `/edit/${e.target.dataset.id}`,
+      //         data: {
+      //           _id: e.target.dataset.id,
+      //         },
+      //       })
+      //         .done((result) => {
+      //           location.replace(`/edit/${e.target.dataset.id}`);
+      //         })
+      //         .fail((err) => {
+      //           console.log(err);
+      //           swal("본인의 게시물이 아닙니다.", {
+      //             icon: "warning",
+      //           }).then((res) => {
+      //             // location.replace(`/detail/${e.target.dataset.id}`);
+      //             return false;
+      //           });
+      //         });
+      //     }
+      //   });
+      // });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
