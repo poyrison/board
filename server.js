@@ -8,6 +8,7 @@ const path = require("path");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const fs = require("fs");
+const router = express.Router();
 require("dotenv").config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -85,12 +86,22 @@ app.get("/", (req, res) => {
     });
 });
 
+// =======  detail  =======
+app.get("/detail/:id", (req, res) => {
+  db.collection("post").findOne(
+    { _id: parseInt(req.params.id) },
+    (err, result) => {
+      res.render("detail.ejs", { posts: result });
+    }
+  );
+});
+
 // =======  edit  =======
 app.get("/edit/:id", loginCheck, (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      res.render("edit.ejs", { posts: result, user: req.user });
+      res.render("edit.ejs", { posts: result });
     }
   );
 });
@@ -98,19 +109,16 @@ app.get("/edit/:id", loginCheck, (req, res) => {
 app.put("/edit", (req, res) => {
   db.collection("post").updateOne(
     { _id: parseInt(req.body.id) },
-    { $set: { content: req.body.title, date: todayDate } },
+    {
+      $set: {
+        name: req.body.name,
+        content: req.body.content,
+        date: todayDate + "(수정됨)",
+      },
+    },
     (err, result) => {
-      res.redirect(`/detail/${req.body.id}`);
-    }
-  );
-});
-
-// =======  detail  =======
-app.get("/detail/:id", (req, res) => {
-  db.collection("post").findOne(
-    { _id: parseInt(req.params.id) },
-    function (err, result) {
-      res.render("detail.ejs", { posts: result });
+      // res.redirect(`/detail/${req.body.id}`);
+      console.log(req.body.id, req.body.name, req.body.content);
     }
   );
 });
@@ -120,15 +128,38 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
-app.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-  }),
-  (req, res) => {
-    res.redirect("/");
-  }
-);
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (info) {
+      const errorMessage = info.reason || "등록된 계정이 아닙니다.";
+      return res.send(
+        `<script>alert("${errorMessage}"); window.location.href = "/login";</script>`
+      );
+    }
+
+    return req.login(user, (loginErr) => {
+      // 이 부분 callback 실행
+      //console.log('req.login callback');
+      if (loginErr) {
+        return res.send(
+          `<script>alert("등록된 계정이 아닙니다."); window.location.href = "/login";</script>`
+        );
+      }
+      const filteredUser = { ...user.dataValues };
+      delete filteredUser.psword;
+      return res.redirect("/");
+    });
+  })(req, res, next);
+});
+// app.post(
+//   "/login",
+//   passport.authenticate("local", {
+//     failureRedirect: "/login",
+//   }),
+//   (req, res) => {
+//     res.redirect("/");
+//   }
+// );
 
 passport.serializeUser((user, done) => {
   done(null, user.id); // id를 이용해서 세션을 저장시키는 코드 (로그인 성공시 발동)
@@ -271,7 +302,7 @@ app.delete("/delete", (req, res) => {
   let deleteItem = { value: req.body.value, writer: req.user.name };
   console.log(deleteItem);
   db.collection("post").deleteOne(deleteItem, (err, result) => {});
-  // res.status(200).send({ message: "성공했습니다." });
+  res.status(200).send({ message: "성공했습니다." });
   console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
 });
 
@@ -305,8 +336,20 @@ app.get("/search", (req, res) => {
     .aggregate(searchCondition)
     .toArray((err, result) => {
       console.log(result);
-      res.render("search.ejs", { posts: result }, { login: result });
+      res.render("search.ejs", { posts: result });
     });
 });
 
-app.use("/shop", require("./routes/shop"));
+// =======  logout  =======
+app.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      console.log(err);
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
+// app.use("/shop", require("./routes/shop"));
+// app.use("/logout", require("./routes/auth"));

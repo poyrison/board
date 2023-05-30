@@ -53,7 +53,8 @@ body {
 .list_date {
   color: black;
 }
-.list_no {
+.list_no,
+.list_date {
   font-size: 12px;
 }
 

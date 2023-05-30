@@ -19,31 +19,47 @@
     <div class="container">
       <form action="/edit?_method=PUT" method="POST">
         <div class="form-group">
+          <label>제목</label>
+          <input
+            type="text"
+            class="edit_content"
+            name="id"
+            value="<%= posts._id %>"
+            style="display: none"
+          />
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            value="<%= posts.name %>"
+          />
           <label>내용</label>
           <textarea
             type="text"
-            name="id"
-            style="display: none"
-            value="<%= posts._id %>"
-            class="edit_content"
-          ></textarea>
-          <textarea
-            type="text"
-            class="form-control"
-            name="title"
-            value="<%= posts.title %>"
-            class="edit_content"
-          ></textarea>
+            class="form-control edit_content"
+            name="content"
+            rows="20"
+          >
+<%= posts.content %></textarea
+          >
         </div>
-        <button type="submit" class="btn btn-danger">수정</button>
+        <div>
+          <button type="submit" class="btn btn-danger modify">수정</button>
+        </div>
       </form>
     </div>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(".modify").click((e) => {
+        swal("수정을 완료했습니다!", {
+          icon: "success",
+        }).then((res) => {
+          console.log("수정 완료");
+          location.replace("/detail/<%= posts._id %>");
+        });
+      });
+    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
       integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"

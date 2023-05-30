@@ -12,18 +12,44 @@
       integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="/public/main.css" />
   </head>
   <body>
     <%- include('nav.ejs') %>
-    <p><%= user.name %>님의 마이페이지입니다.</p>
-    <button class="btn btn-danger">로그아웃</button>
+    <div class="container">
+      <p><%= user.name %>님의 마이페이지입니다.</p>
+      <button class="btn btn-danger" id="logout">로그아웃</button>
+    </div>
 
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $("#logout").click((e) => {
+        swal({
+          title: "로그아웃 하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              method: "GET",
+              url: "/logout",
+            })
+              .done((result) => {
+                swal("로그아웃 완료", {
+                  icon: "success",
+                }).then((res) => {
+                  window.location.href = "/";
+                });
+              })
+              .fail((xhr, code, err) => {
+                console.log(xhr, code, err);
+              });
+          }
+        });
+      });
+    </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
       integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
