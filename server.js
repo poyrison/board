@@ -94,7 +94,6 @@ app.get("/detail/:id", (req, res) => {
     { _id: parseInt(req.params.id) },
     (err, result) => {
       let info = { posts: result };
-      console.log(info);
       res.render("detail.ejs", { posts: result });
     }
   );
@@ -158,34 +157,21 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
-      bcrypt.compare(req.body.pw, hash, (err, res) => {
-        if (res) {
-          // return res.send(
-          //   `<script>alert("로그인 성공"); window.location.href = "/";</script>`
-          // );
-          console.log({ hash, res });
-        } else {
-          if (info) {
-            const errorMessage = info.reason || "등록된 계정이 아닙니다.";
-            return res.send(
-              `<script>alert("${errorMessage}"); window.location.href = "/login";</script>`
-            );
-          }
-
-          return req.login(user, (loginErr) => {
-            // 이 부분 callback 실행
-            if (loginErr) {
-              return res.send(
-                `<script>alert("등록된 계정이 아닙니다."); window.location.href = "/login";</script>`
-              );
-            }
-            const filteredUser = { ...user.dataValues };
-            delete filteredUser.psword;
-            return res.redirect("/");
-          });
-        }
-      });
+    if (info) {
+      return res.send(
+        `<script>alert("아이디 혹은 비밀번호를 확인해주세요"); window.location.href = "/login";</script>`
+      );
+    }
+    return req.login(user, (loginErr) => {
+      // 이 부분 callback 실행
+      if (loginErr) {
+        return res.send(
+          `<script>alert("아이디 혹은 비밀번호를 확인해주세요"); window.location.href = "/login";</script>`
+        );
+      }
+      const filteredUser = { ...user.dataValues };
+      delete filteredUser.psword;
+      return res.redirect("/");
     });
   })(req, res, next);
 });
@@ -213,15 +199,19 @@ passport.use(
     },
     (inputID, inputPW, done) => {
       db.collection("login").findOne({ id: inputID }, (err, result) => {
-        if (err) return done(에러);
-
-        if (!result)
-          return done(null, false, { message: "존재하지않는 아이디입니다." });
-        if (inputPW == result.pw) {
-          return done(null, result);
-        } else {
-          return done(null, false, { message: "패스워드를 확인해주세요" });
-        }
+        bcrypt.compare(inputPW, result.pw, (err, res) => {
+          if (!result) {
+            console.log(result);
+            return done(null, false, { message: "존재하지않는 아이디입니다." });
+          }
+          if (res) {
+            console.log(res);
+            return done(null, result);
+          } else {
+            console.log(result);
+            return done(null, false, { message: "패스워드를 확인해주세요" });
+          }
+        });
       });
     }
   )
