@@ -159,18 +159,19 @@ app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (info) {
       return res.send(
-        `<script>alert("아이디 혹은 비밀번호를 확인해주세요"); window.location.href = "/login";</script>`
+        `<script>alert("${info.message}"); window.location.href = "/login";</script>`
       );
     }
     return req.login(user, (loginErr) => {
       // 이 부분 callback 실행
       if (loginErr) {
         return res.send(
-          `<script>alert("아이디 혹은 비밀번호를 확인해주세요"); window.location.href = "/login";</script>`
+          `<script>alert("${info.message}"); window.location.href = "/login";</script>`
         );
       }
       const filteredUser = { ...user.dataValues };
       delete filteredUser.psword;
+      console.log(`${user.name} 로그인`);
       return res.redirect("/");
     });
   })(req, res, next);
@@ -199,19 +200,17 @@ passport.use(
     },
     (inputID, inputPW, done) => {
       db.collection("login").findOne({ id: inputID }, (err, result) => {
-        bcrypt.compare(inputPW, result.pw, (err, res) => {
-          if (!result) {
-            console.log(result);
-            return done(null, false, { message: "존재하지않는 아이디입니다." });
-          }
-          if (res) {
-            console.log(res);
-            return done(null, result);
-          } else {
-            console.log(result);
-            return done(null, false, { message: "패스워드를 확인해주세요" });
-          }
-        });
+        if (!result) {
+          return done(null, false, { message: "아이디를 확인해주세요." });
+        } else {
+          bcrypt.compare(inputPW, result.pw, (err, res) => {
+            if (res) {
+              return done(null, result);
+            } else if (result) {
+              return done(null, false, { message: "패스워드를 확인해주세요." });
+            }
+          });
+        }
       });
     }
   )
