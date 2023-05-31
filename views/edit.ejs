@@ -19,10 +19,11 @@
     <div class="container">
       <form action="/edit?_method=PUT" method="POST">
         <div class="form-group">
+          <input name="date" style="display: none" value="<%= posts.date %>"></input>
           <label>제목</label>
           <input
             type="text"
-            class="edit_content"
+            class="form-control"
             name="id"
             value="<%= posts._id %>"
             style="display: none"

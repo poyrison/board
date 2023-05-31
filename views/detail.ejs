@@ -51,7 +51,7 @@
                 type="button"
                 class="btn btn-outline-danger delete"
                 data-id="<%= posts._id %>"
-                data-value="<%= posts.writer %>"
+                data-writer="<%= posts.writer %>"
               >
                 삭제
               </button>
@@ -63,9 +63,6 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      let input = document.querySelector(".delete");
-      console.log(input.dataset);
-      console.log();
       $(".delete").click((e) => {
         swal({
           title: "정말 삭제하시겠습니까?",
@@ -78,7 +75,8 @@
               method: "DELETE",
               url: "/delete",
               data: {
-                value: e.target.dataset.writer,
+                _id: e.target.dataset.id,
+                writer: e.target.dataset.writer,
               },
             }).done(
               swal("삭제를 완료했습니다!", {
@@ -92,6 +90,7 @@
         });
       });
       $(".modify").click((e) => {
+        e.preventDefault();
         swal({
           title: "수정하시겠습니까?",
           icon: "warning",
@@ -99,13 +98,14 @@
           dangerMode: true,
         }).then((willModify) => {
           if (willModify) {
-            $.ajax({
-              method: "GET",
-              url: `/edit/${e.target.dataset.id}`,
-              data: {
-                _id: e.target.dataset.id,
-              },
-            });
+            // $.ajax({
+            //   method: "GET",
+            //   url: `/edit/${e.target.dataset.id}`,
+            //   data: {
+            //     _id: e.target.dataset.id,
+            //   },
+            // });
+            window.location.href = `/edit/${e.target.dataset.id}`;
           }
         });
       });

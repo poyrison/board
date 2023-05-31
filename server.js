@@ -8,6 +8,8 @@ const path = require("path");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const router = express.Router();
 require("dotenv").config();
 
@@ -91,6 +93,8 @@ app.get("/detail/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
+      let info = { posts: result };
+      console.log(info);
       res.render("detail.ejs", { posts: result });
     }
   );
@@ -99,7 +103,7 @@ app.get("/detail/:id", (req, res) => {
 // =======  edit  =======
 app.get("/edit/:id", loginCheck, (req, res) => {
   db.collection("post").findOne(
-    { _id: parseInt(req.params.id) },
+    { _id: parseInt(req.params.id) }, // /edit/:id 부분의 값을 가져온다.
     (err, result) => {
       res.render("edit.ejs", { posts: result });
     }
@@ -118,9 +122,33 @@ app.put("/edit", (req, res) => {
     },
     (err, result) => {
       // res.redirect(`/detail/${req.body.id}`);
-      console.log(req.body.id, req.body.name, req.body.content);
+      console.log(
+        `글번호: ${req.body.id}, 제목: ${req.body.name}, 내용: ${req.body.content} 날짜: ${req.body.date}`
+      );
     }
   );
+});
+
+// =======  signup  =======
+app.get("/signup", (req, res) => {
+  res.render("signup.ejs");
+});
+
+app.post("/signup", (req, res) => {
+  res.render("login.ejs");
+  bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
+    db.collection("login").insertOne(
+      { id: req.body.id, pw: hash, name: req.body.user_name },
+      () => {
+        console.log("============================");
+        console.log(`ID: ${req.body.id}`);
+        console.log(`PW: ${hash}`);
+        console.log(`Name: ${req.body.user_name}`);
+        console.log("저장 완료");
+        console.log("============================");
+      }
+    );
+  });
 });
 
 // =======  login  =======
@@ -130,41 +158,44 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if (info) {
-      const errorMessage = info.reason || "등록된 계정이 아닙니다.";
-      return res.send(
-        `<script>alert("${errorMessage}"); window.location.href = "/login";</script>`
-      );
-    }
+    bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
+      bcrypt.compare(req.body.pw, hash, (err, res) => {
+        if (res) {
+          // return res.send(
+          //   `<script>alert("로그인 성공"); window.location.href = "/";</script>`
+          // );
+          console.log({ hash, res });
+        } else {
+          if (info) {
+            const errorMessage = info.reason || "등록된 계정이 아닙니다.";
+            return res.send(
+              `<script>alert("${errorMessage}"); window.location.href = "/login";</script>`
+            );
+          }
 
-    return req.login(user, (loginErr) => {
-      // 이 부분 callback 실행
-      //console.log('req.login callback');
-      if (loginErr) {
-        return res.send(
-          `<script>alert("등록된 계정이 아닙니다."); window.location.href = "/login";</script>`
-        );
-      }
-      const filteredUser = { ...user.dataValues };
-      delete filteredUser.psword;
-      return res.redirect("/");
+          return req.login(user, (loginErr) => {
+            // 이 부분 callback 실행
+            if (loginErr) {
+              return res.send(
+                `<script>alert("등록된 계정이 아닙니다."); window.location.href = "/login";</script>`
+              );
+            }
+            const filteredUser = { ...user.dataValues };
+            delete filteredUser.psword;
+            return res.redirect("/");
+          });
+        }
+      });
     });
   })(req, res, next);
 });
-// app.post(
-//   "/login",
-//   passport.authenticate("local", {
-//     failureRedirect: "/login",
-//   }),
-//   (req, res) => {
-//     res.redirect("/");
-//   }
-// );
 
+// 로그인 성공시 세션에 저장
 passport.serializeUser((user, done) => {
   done(null, user.id); // id를 이용해서 세션을 저장시키는 코드 (로그인 성공시 발동)
 });
 
+// 로그인 성공시 세션에 저장된 정보를 가져옴
 passport.deserializeUser((id, done) => {
   db.collection("login").findOne({ id: id }, (err, result) => {
     done(null, result);
@@ -180,13 +211,13 @@ passport.use(
       session: true,
       passReqToCallback: false,
     },
-    (입력한아이디, 입력한비번, done) => {
-      db.collection("login").findOne({ id: 입력한아이디 }, (err, result) => {
+    (inputID, inputPW, done) => {
+      db.collection("login").findOne({ id: inputID }, (err, result) => {
         if (err) return done(에러);
 
         if (!result)
           return done(null, false, { message: "존재하지않는 아이디입니다." });
-        if (입력한비번 == result.pw) {
+        if (inputPW == result.pw) {
           return done(null, result);
         } else {
           return done(null, false, { message: "패스워드를 확인해주세요" });
@@ -195,27 +226,6 @@ passport.use(
     }
   )
 );
-
-// =======  signup  =======
-app.get("/signup", (req, res) => {
-  res.render("signup.ejs");
-});
-
-app.post("/signup", (req, res) => {
-  res.render("login.ejs");
-
-  db.collection("login").insertOne(
-    { id: req.body.id, pw: req.body.pw, name: req.body.user_name },
-    () => {
-      console.log("============================");
-      console.log(`ID: ${req.body.id}`);
-      console.log(`PW: ${req.body.pw}`);
-      console.log(`Name: ${req.body.user_name}`);
-      console.log("저장 완료");
-      console.log("============================");
-    }
-  );
-});
 
 // =======  add  =======
 app.post("/add", upload.single("profile"), (req, res) => {
@@ -299,11 +309,17 @@ app.delete("/delete", (req, res) => {
   //   }
   // });
 
-  let deleteItem = { value: req.body.value, writer: req.user.name };
-  console.log(deleteItem);
-  db.collection("post").deleteOne(deleteItem, (err, result) => {});
-  res.status(200).send({ message: "성공했습니다." });
-  console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+  let deleteItem = { writer: req.body.writer, user: req.user.name };
+  if (req.body.writer !== req.user.name) {
+    res.render(
+      "<script>alert('게시물의 작성자가 아닙니다.');history.back();</script>"
+    );
+  } else {
+    console.log(deleteItem);
+    db.collection("post").deleteOne(deleteItem, (err, result) => {});
+    res.status(200).send({ message: "성공했습니다." });
+    console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+  }
 });
 
 // =======  myPage  =======
