@@ -51,7 +51,10 @@
                 type="button"
                 class="btn btn-outline-danger delete"
                 data-id="<%= posts._id %>"
+                data-user_id="<%= user.id %>"
+                data-writerId="<%= posts.writerId %>"
                 data-writer="<%= posts.writer %>"
+                data-upload="<%= posts.upload %>"
               >
                 삭제
               </button>
@@ -64,50 +67,68 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".delete").click((e) => {
-        swal({
-          title: "정말 삭제하시겠습니까?",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        }).then((willDelete) => {
-          if (willDelete) {
-            $.ajax({
-              method: "DELETE",
-              url: "/delete",
-              data: {
-                _id: e.target.dataset.id,
-                writer: e.target.dataset.writer,
-              },
-            }).done(
-              swal("삭제를 완료했습니다!", {
-                icon: "success",
-              }).then((res) => {
-                console.log("삭제 완료");
-                location.replace("/");
-              })
-            );
-          }
-        });
+        if ("<%- user.id %>" == "<%- posts.writerId %>") {
+          swal({
+            title: "정말 삭제하시겠습니까?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) {
+              $.ajax({
+                method: "DELETE",
+                url: "/delete",
+                data: {
+                  _id: e.target.dataset.id,
+                  writer: e.target.dataset.writer,
+                  upload: e.target.dataset.upload,
+                  user_id: e.target.dataset.user,
+                },
+              }).done(
+                swal("삭제를 완료했습니다!", {
+                  icon: "success",
+                }).then((res) => {
+                  console.log("삭제 완료");
+                  location.replace("/");
+                })
+              );
+            }
+          });
+        } else {
+          swal("본인의 게시물이 아닙니다.", {
+            icon: "warning",
+          }).then((res) => {
+            return false;
+          });
+        }
       });
       $(".modify").click((e) => {
         e.preventDefault();
-        swal({
-          title: "수정하시겠습니까?",
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        }).then((willModify) => {
-          if (willModify) {
-            // $.ajax({
-            //   method: "GET",
-            //   url: `/edit/${e.target.dataset.id}`,
-            //   data: {
-            //     _id: e.target.dataset.id,
-            //   },
-            // });
-            window.location.href = `/edit/${e.target.dataset.id}`;
-          }
-        });
+        if ("<%- user.id %>" == "<%- posts.writerId %>") {
+          swal({
+            title: "수정하시겠습니까?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willModify) => {
+            if (willModify) {
+              // $.ajax({
+              //   method: "GET",
+              //   url: `/edit/${e.target.dataset.id}`,
+              //   data: {
+              //     _id: e.target.dataset.id,
+              //   },
+              // });
+              window.location.href = `/edit/${e.target.dataset.id}`;
+            }
+          });
+        } else {
+          swal("본인의 게시물이 아닙니다.", {
+            icon: "warning",
+          }).then((res) => {
+            return false;
+          });
+        }
       });
       // $(".delete").click((e) => {
       //   e.preventDefault();

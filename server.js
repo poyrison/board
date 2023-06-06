@@ -93,8 +93,7 @@ app.get("/detail/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      let info = { posts: result };
-      res.render("detail.ejs", { posts: result });
+      res.render("detail.ejs", { posts: result, user: req.user });
     }
   );
 });
@@ -229,6 +228,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
 
       let saveItem = {
         _id: totalPost + 1,
+        writerId: req.user.id,
         writer: req.user.name,
         date: todayDate,
         // date: Date.now(),
@@ -258,6 +258,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
 
       let saveItem = {
         _id: totalPost + 1,
+        writerId: req.user.id,
         writer: req.user.name,
         date: todayDate,
         // date: Date.now(),
@@ -289,31 +290,40 @@ app.get("/image/:imageName", (req, res) => {
 app.delete("/delete", (req, res) => {
   req.body._id = parseInt(req.body._id);
 
-  // fs.unlink(`./public/image/${req.body.upload}`, (err) => {
-  //   try {
-  //     if (err) throw new Error();
-  //     console.log(`${req.body.upload} 삭제`);
-  //   } catch (e) {
-  //     console.log(e.message);
-  //   }
-  // });
-
   let deleteItem = { writer: req.body.writer, user: req.user.name };
-  if (req.body.writer !== req.user.name) {
-    res.render(
-      "<script>alert('게시물의 작성자가 아닙니다.');history.back();</script>"
-    );
+  if (req.body.writer == req.user.name) {
+    if (req.body.upload.length == 0) {
+      console.log(req.body);
+      console.log({ user: req.body.user_id, writer_id: req.user.id });
+      console.log(`업로드: ${req.body.upload}`);
+      console.log(req.body.upload.length);
+      console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+      db.collection("post").deleteOne(req.body, (err, result) => {
+        res.status(200).send({ message: "성공했습니다." });
+      });
+    } else {
+      console.log(req.body.upload);
+      db.collection("post").deleteOne(req.body, (err, result) => {
+        res.status(200).send({ message: "성공했습니다." });
+      });
+      fs.unlink(`./public/image/${req.body.upload}`, (err) => {
+        try {
+          if (err) throw new Error();
+          console.log(`${req.body.upload} 삭제`);
+        } catch (e) {
+          console.log(e.message);
+        }
+      });
+    }
   } else {
-    console.log(deleteItem);
-    db.collection("post").deleteOne(deleteItem, (err, result) => {});
-    res.status(200).send({ message: "성공했습니다." });
-    console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+    console.log("게시물의 작성자가 아닙니다.");
   }
 });
 
 // =======  myPage  =======
 app.get("/myPage", loginCheck, (req, res) => {
   res.render("myPage.ejs", { user: req.user });
+  console.log(req.user);
 });
 
 // =======  write  =======
