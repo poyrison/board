@@ -84,7 +84,7 @@ app.get("/", (req, res) => {
   db.collection("post")
     .find()
     .toArray((err, result) => {
-      res.render("index.ejs", { posts: result });
+      res.render("index.ejs", { posts: result, user: req.user });
     });
 });
 
@@ -103,7 +103,7 @@ app.get("/edit/:id", loginCheck, (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) }, // /edit/:id 부분의 값을 가져온다.
     (err, result) => {
-      res.render("edit.ejs", { posts: result });
+      res.render("edit.ejs", { posts: result, user: req.user });
     }
   );
 });
@@ -328,7 +328,7 @@ app.get("/myPage", loginCheck, (req, res) => {
 
 // =======  write  =======
 app.get("/write", loginCheck, (req, res) => {
-  res.render("write.ejs");
+  res.render("write.ejs", { user: req.user });
 });
 
 // =======  search  =======
@@ -351,7 +351,7 @@ app.get("/search", (req, res) => {
     .aggregate(searchCondition)
     .toArray((err, result) => {
       console.log(result);
-      res.render("search.ejs", { posts: result });
+      res.render("search.ejs", { posts: result, user: req.user });
     });
 });
 
