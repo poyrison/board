@@ -40,7 +40,7 @@
             />
           </div>
           <div class="modify_box">
-            <% if( user.id == posts.writerId){ %>
+            <% if(user){%> <% if( user.id == posts.writerId){ %>
             <div>
               <a
                 href="/edit/<%= posts._id %>"
@@ -53,14 +53,14 @@
                 class="btn btn-outline-danger delete"
                 data-id="<%= posts._id %>"
                 data-user_id="<%= user.id %>"
-                data-writerId="<%= posts.writerId %>"
+                data-writer_id="<%= posts.writerId %>"
                 data-writer="<%= posts.writer %>"
                 data-upload="<%= posts.upload %>"
               >
                 삭제
               </button>
             </div>
-            <%}%>
+            <%}%> <%} %>
           </div>
         </div>
       </div>
@@ -69,22 +69,39 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".delete").click((e) => {
-        if ("<%- user.id %>" == "<%- posts.writerId %>") {
-          swal({
-            title: "정말 삭제하시겠습니까?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          }).then((willDelete) => {
-            if (willDelete) {
+        swal({
+          title: "정말 삭제하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            if (e.target.dataset.upload) {
               $.ajax({
                 method: "DELETE",
                 url: "/delete",
                 data: {
                   _id: e.target.dataset.id,
+                  writerId: e.target.dataset.writer_id,
                   writer: e.target.dataset.writer,
                   upload: e.target.dataset.upload,
-                  user_id: e.target.dataset.user,
+                },
+              }).done(
+                swal("삭제를 완료했습니다!", {
+                  icon: "success",
+                }).then((res) => {
+                  console.log("삭제 완료");
+                  location.replace("/");
+                })
+              );
+            } else {
+              $.ajax({
+                method: "DELETE",
+                url: "/delete",
+                data: {
+                  _id: e.target.dataset.id,
+                  writerId: e.target.dataset.writer_id,
+                  writer: e.target.dataset.writer,
                 },
               }).done(
                 swal("삭제를 완료했습니다!", {
@@ -95,35 +112,21 @@
                 })
               );
             }
-          });
-        } else {
-          swal("본인의 게시물이 아닙니다.", {
-            icon: "warning",
-          }).then((res) => {
-            return false;
-          });
-        }
+          }
+        });
       });
       $(".modify").click((e) => {
         e.preventDefault();
-        if ("<%- user.id %>" == "<%- posts.writerId %>") {
-          swal({
-            title: "수정하시겠습니까?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          }).then((willModify) => {
-            if (willModify) {
-              window.location.href = `/edit/${e.target.dataset.id}`;
-            }
-          });
-        } else {
-          swal("본인의 게시물이 아닙니다.", {
-            icon: "warning",
-          }).then((res) => {
-            return false;
-          });
-        }
+        swal({
+          title: "수정하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willModify) => {
+          if (willModify) {
+            window.location.href = `/edit/${e.target.dataset.id}`;
+          }
+        });
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

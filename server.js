@@ -129,7 +129,7 @@ app.put("/edit", (req, res) => {
 
 // =======  signup  =======
 app.get("/signup", (req, res) => {
-  res.render("signup.ejs");
+  res.render("signup.ejs", { user: req.user });
 });
 
 app.post("/signup", (req, res) => {
@@ -151,7 +151,7 @@ app.post("/signup", (req, res) => {
 
 // =======  login  =======
 app.get("/login", (req, res) => {
-  res.render("login.ejs");
+  res.render("login.ejs", { user: req.user });
 });
 
 app.post("/login", (req, res, next) => {
@@ -264,7 +264,6 @@ app.post("/add", upload.single("profile"), (req, res) => {
         // date: Date.now(),
         name: req.body.title,
         content: req.body.content,
-        upload: null,
       };
 
       db.collection("post").insertOne(saveItem, () => {
@@ -290,19 +289,9 @@ app.get("/image/:imageName", (req, res) => {
 app.delete("/delete", (req, res) => {
   req.body._id = parseInt(req.body._id);
 
-  let deleteItem = { writer: req.body.writer, user: req.user.name };
-  if (req.body.writer == req.user.name) {
-    if (req.body.upload.length == 0) {
-      console.log(req.body);
-      console.log({ user: req.body.user_id, writer_id: req.user.id });
-      console.log(`업로드: ${req.body.upload}`);
-      console.log(req.body.upload.length);
-      console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
-      db.collection("post").deleteOne(req.body, (err, result) => {
-        res.status(200).send({ message: "성공했습니다." });
-      });
-    } else {
-      console.log(req.body.upload);
+  let deleteItem = { writerId: req.body, user: req.user.id };
+  if (req.body.writerId == req.user.id) {
+    if (req.body.upload) {
       db.collection("post").deleteOne(req.body, (err, result) => {
         res.status(200).send({ message: "성공했습니다." });
       });
@@ -314,6 +303,11 @@ app.delete("/delete", (req, res) => {
           console.log(e.message);
         }
       });
+    } else {
+      console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+      db.collection("post").deleteOne(req.body, (err, result) => {
+        res.status(200).send({ message: "성공했습니다." });
+      });
     }
   } else {
     console.log("게시물의 작성자가 아닙니다.");
@@ -323,7 +317,6 @@ app.delete("/delete", (req, res) => {
 // =======  myPage  =======
 app.get("/myPage", loginCheck, (req, res) => {
   res.render("myPage.ejs", { user: req.user });
-  console.log(req.user);
 });
 
 // =======  write  =======

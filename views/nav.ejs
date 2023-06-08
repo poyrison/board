@@ -28,25 +28,20 @@
             data-toggle="dropdown"
             aria-expanded="false"
           >
-            <% if(!user){ %>
-            <b>Guest</b>
-            <%}else if(user.name){%>
+            <% if(user){ %>
             <b> <%= user.name %> </b>
-            <%}%>
-            <!-- <b>Guest</b> -->
+            <%}else{%>
+            <b>Guest</b>
+            <% }%>
           </a>
           <div class="dropdown-menu">
-            <% if(!user){ %>
-            <a class="nav-link" href="/login">로그인</a>
-            <a class="nav-link" href="/signUp">회원가입</a>
-            <%}else if(user.name){%>
+            <% if(user){ %>
             <a class="nav-link" href="/write">글쓰기</a>
             <a class="dropdown-item nav-link" href="/myPage">마이페이지</a>
-            <%}%>
-            <!-- <a class="nav-link" href="/write">글쓰기</a>
-            <a class="dropdown-item nav-link" href="/myPage">마이페이지</a>
+            <%}else{%>
             <a class="nav-link" href="/login">로그인</a>
-            <a class="nav-link" href="/signUp">회원가입</a> -->
+            <a class="nav-link" href="/signUp">회원가입</a>
+            <%}%>
           </div>
         </li>
       </ul>
