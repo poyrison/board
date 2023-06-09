@@ -63,6 +63,71 @@
             <%}%> <%} %>
           </div>
         </div>
+        <hr />
+        <div>
+          <h5 style="padding: 0 40px">Comments 3</h5>
+          <hr />
+          <div class="cmt-area">
+            <div>
+              <p>user1</p>
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                Numquam tempora, perferendis illo quam quod sint nam explicabo
+                nesciunt pariatur maiores nemo laborum ratione atque dolorum
+                similique. Voluptatibus sed eum qui!
+              </p>
+              <hr />
+            </div>
+            <div>
+              <p>user2</p>
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                Numquam tempora, perferendis
+              </p>
+              <hr />
+            </div>
+            <div>
+              <p>user3</p>
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                Numquam tempora, perferendis illo quam quod sint nam explicabo
+                nesciunt pariatur maiores nemo
+              </p>
+              <hr />
+            </div>
+          </div>
+          <div>
+            <% if(user){ %>
+            <form class="cmt-form">
+              <textarea
+                type="textarea"
+                required
+                id="cmt-write-area"
+                class="form-control"
+                maxlength="300"
+              ></textarea>
+              <button type="submit" class="btn btn-dark" id="cmt-btn">
+                작성
+              </button>
+            </form>
+            <%}else{%>
+            <form class="cmt-form">
+              <textarea
+                type="textarea"
+                required
+                id="cmt-write-area"
+                class="form-control"
+                placeholder="로그인 후에 이용해 주세요"
+                disabled
+                maxlength="300"
+              ></textarea>
+              <button type="submit" class="btn btn-dark" id="cmt-btn" disabled>
+                작성
+              </button>
+            </form>
+            <% }%>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -355,7 +355,7 @@ app.get("/logout", (req, res, next) => {
       console.log(err);
       return next(err);
     }
-    res.redirect("/");
+    res.send("<script>location.href='/'</script>");
   });
 });
 

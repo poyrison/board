@@ -87,7 +87,11 @@ body {
 }
 
 .card {
-  width: 100%;
+  position: absolute;
+  margin: 0 150px;
+  top: 100px;
+  left: 0;
+  width: 80vw;
 }
 
 .modify_box {
@@ -135,4 +139,27 @@ body {
 
 .card-body img {
   cursor: pointer;
+}
+
+#cmt-write-area {
+  display: inline-block;
+  width: 85%;
+  height: 150px;
+  margin-right: 20px;
+}
+
+#cmt-btn {
+  display: inline-block;
+  margin: 0;
+  width: 120px;
+  height: 50px;
+  margin-bottom: 40px;
+}
+
+.cmt-form {
+  padding: 0 40px;
+}
+
+.cmt-area{
+  padding: 40px;
 }
