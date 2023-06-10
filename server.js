@@ -309,12 +309,11 @@ app.delete("/delete", (req, res) => {
   req.body._id = parseInt(req.body._id);
 
   let deleteItem = { writerId: req.body, user: req.user.id };
-  if (req.body.writerId == req.user.id) {
+  if (req.body.writerId == req.user.id || req.user.id == "manager") {
     if (req.body.upload) {
       db.collection("post").deleteOne(req.body, (err, result) => {
-        console.log(req.body);
         db.collection("comment").deleteMany(
-          { parentAddress: parseInt(req.body._id) },
+          { parentAddress: req.body._id },
           (err, result) => {
             console.log(`${req.body._id}번 게시물 삭제`);
             res.status(200).send({ message: "성공했습니다." });
@@ -332,9 +331,8 @@ app.delete("/delete", (req, res) => {
     } else {
       // console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
       db.collection("post").deleteOne(req.body, (err, result) => {
-        console.log(req.body);
         db.collection("comment").deleteMany(
-          { parentAddress: parseInt(req.body._id) },
+          { parentAddress: req.body._id },
           (err, result) => {
             console.log(`${req.body._id}번 게시물 삭제`);
             res.status(200).send({ message: "성공했습니다." });

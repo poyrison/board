@@ -61,6 +61,18 @@
                 삭제
               </button>
             </div>
+            <%}else if(user.id=='manager'){%>
+            <button
+              type="button"
+              class="btn btn-outline-danger delete"
+              data-id="<%= posts._id %>"
+              data-user_id="<%= user.id %>"
+              data-writer_id="<%= posts.writerId %>"
+              data-writer="<%= posts.writer %>"
+              data-upload="<%= posts.upload %>"
+            >
+              삭제
+            </button>
             <%}%> <%} %>
           </div>
         </div>
