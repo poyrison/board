@@ -37,6 +37,7 @@ const second = date.getSeconds();
 const todayDate = `${year}.${month}.${day}`;
 const uploadTime = `${year}${month}${day}${hour}${minute}${second}`;
 const lastTime = `${hour}${minute}${second}`;
+const cmtTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
 
 let multer = require("multer");
 
@@ -93,9 +94,28 @@ app.get("/detail/:id", (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      res.render("detail.ejs", { posts: result, user: req.user });
+      db.collection("comment")
+        .find({ parentAddress: parseInt(req.params.id) })
+        .toArray((err, result2) => {
+          res.render("detail.ejs", {
+            posts: result,
+            user: req.user,
+            comments: result2,
+          });
+        });
     }
   );
+});
+
+// =======  comment  =======
+app.post("/comment", (req, res) => {
+  let saveComment = {
+    cmtContent: req.body.comment,
+    parentAddress: parseInt(req.body.id),
+    cmtWriter: req.body.cmtWriter,
+    cmtDate: req.body.cmtTime,
+  };
+  db.collection("comment").insertOne(saveComment, (err, result) => {});
 });
 
 // =======  edit  =======
@@ -261,7 +281,6 @@ app.post("/add", upload.single("profile"), (req, res) => {
         writerId: req.user.id,
         writer: req.user.name,
         date: todayDate,
-        // date: Date.now(),
         name: req.body.title,
         content: req.body.content,
       };
@@ -293,7 +312,14 @@ app.delete("/delete", (req, res) => {
   if (req.body.writerId == req.user.id) {
     if (req.body.upload) {
       db.collection("post").deleteOne(req.body, (err, result) => {
-        res.status(200).send({ message: "성공했습니다." });
+        console.log(req.body);
+        db.collection("comment").deleteMany(
+          { parentAddress: parseInt(req.body._id) },
+          (err, result) => {
+            console.log(`${req.body._id}번 게시물 삭제`);
+            res.status(200).send({ message: "성공했습니다." });
+          }
+        );
       });
       fs.unlink(`./public/image/${req.body.upload}`, (err) => {
         try {
@@ -304,9 +330,16 @@ app.delete("/delete", (req, res) => {
         }
       });
     } else {
-      console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
+      // console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
       db.collection("post").deleteOne(req.body, (err, result) => {
-        res.status(200).send({ message: "성공했습니다." });
+        console.log(req.body);
+        db.collection("comment").deleteMany(
+          { parentAddress: parseInt(req.body._id) },
+          (err, result) => {
+            console.log(`${req.body._id}번 게시물 삭제`);
+            res.status(200).send({ message: "성공했습니다." });
+          }
+        );
       });
     }
   } else {

@@ -39,6 +39,7 @@
               style="max-width: 800px; max-height: 800px"
             />
           </div>
+          <!-- 수정 및 삭제 --><!-- 수정 및 삭제 --><!-- 수정 및 삭제 -->
           <div class="modify_box">
             <% if(user){%> <% if( user.id == posts.writerId){ %>
             <div>
@@ -64,69 +65,70 @@
           </div>
         </div>
         <hr />
+        <!-- 댓글 --><!-- 댓글 --><!-- 댓글 --><!-- 댓글 -->
         <div>
-          <h5 style="padding: 0 40px">Comments 3</h5>
+          <h5 style="padding: 0 40px">Comments <%= comments.length %></h5>
           <hr />
-          <div class="cmt-area">
-            <div>
-              <p>user1</p>
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam tempora, perferendis illo quam quod sint nam explicabo
-                nesciunt pariatur maiores nemo laborum ratione atque dolorum
-                similique. Voluptatibus sed eum qui!
-              </p>
+          <ul class="cmt-area" style="list-style: none">
+            <% if(comments.length >= 1){%> <% for (let i=0; i < comments.length;
+            i++){ %>
+            <li>
+              <span class="comment_writer text-muted"
+                ><b><%= comments[i].cmtWriter %></b></span
+              >
+              <span class="comment_date text-muted"
+                ><%= comments[i].cmtDate %></span
+              >
+              <p style="margin: 0"><%= comments[i].cmtContent %></p>
               <hr />
-            </div>
-            <div>
-              <p>user2</p>
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam tempora, perferendis
-              </p>
-              <hr />
-            </div>
-            <div>
-              <p>user3</p>
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Numquam tempora, perferendis illo quam quod sint nam explicabo
-                nesciunt pariatur maiores nemo
-              </p>
-              <hr />
-            </div>
-          </div>
-          <div>
-            <% if(user){ %>
-            <form class="cmt-form">
-              <textarea
-                type="textarea"
-                required
-                id="cmt-write-area"
-                class="form-control"
-                maxlength="300"
-              ></textarea>
-              <button type="submit" class="btn btn-dark" id="cmt-btn">
-                작성
-              </button>
-            </form>
-            <%}else{%>
-            <form class="cmt-form">
-              <textarea
-                type="textarea"
-                required
-                id="cmt-write-area"
-                class="form-control"
-                placeholder="로그인 후에 이용해 주세요"
-                disabled
-                maxlength="300"
-              ></textarea>
-              <button type="submit" class="btn btn-dark" id="cmt-btn" disabled>
-                작성
-              </button>
-            </form>
-            <% }%>
-          </div>
+            </li>
+            <% } %> <%}else{%>
+            <h6 class="text-muted">댓글이 없습니다.</h6>
+            <%}%>
+          </ul>
+        </div>
+        <div>
+          <!-- 댓글 작성란 --><!-- 댓글 작성란 --><!-- 댓글 작성란 --><!-- 댓글 작성란 -->
+          <% if(user){ %>
+          <form class="cmt-form" method="POST" action="/comment">
+            <textarea
+              type="textarea"
+              required
+              id="cmt-write-area"
+              class="form-control"
+              maxlength="300"
+            ></textarea>
+            <button
+              type="submit"
+              class="btn btn-dark"
+              id="cmt-btn"
+              data-id="<%= posts._id %>"
+              data-writer="<%= user.name %>"
+            >
+              작성
+            </button>
+          </form>
+          <%}else{%>
+          <form class="cmt-form">
+            <textarea
+              type="textarea"
+              id="cmt-write-area"
+              class="form-control"
+              placeholder="로그인 후에 이용해 주세요"
+              disabled
+              style="cursor: not-allowed"
+            ></textarea>
+            <button
+              type="submit"
+              class="btn btn-dark"
+              id="cmt-btn"
+              disabled
+              style="cursor: not-allowed"
+            >
+              작성
+            </button>
+          </form>
+          <% }%>
         </div>
       </div>
     </div>
@@ -192,6 +194,50 @@
             window.location.href = `/edit/${e.target.dataset.id}`;
           }
         });
+      });
+      $("#cmt-btn").click((e) => {
+        let commentValue = $("textarea#cmt-write-area").val();
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+        const second = date.getSeconds();
+        const cmtTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+        e.preventDefault();
+        if (commentValue.length <= 0) {
+          swal({
+            title: "내용을 입력해주세요",
+            icon: "warning",
+          });
+        } else {
+          swal({
+            title: "댓글을 작성하시겠습니까?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willCmt) => {
+            if (willCmt) {
+              $.ajax({
+                method: "POST",
+                url: "/comment",
+                data: {
+                  comment: commentValue,
+                  id: e.target.dataset.id,
+                  cmtWriter: e.target.dataset.writer,
+                  cmtTime: cmtTime,
+                },
+              }).done(
+                swal("댓글을 작성했습니다.", {
+                  icon: "success",
+                }).then((res) => {
+                  window.location.href = `/detail/${e.target.dataset.id}`;
+                })
+              );
+            }
+          });
+        }
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

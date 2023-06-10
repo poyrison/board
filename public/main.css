@@ -7,6 +7,10 @@ body {
   height: 100vh;
 }
 
+textarea {
+  resize: none;
+}
+
 .flex {
   display: flex;
 }
@@ -58,11 +62,8 @@ body {
   font-size: 12px;
 }
 
-/* .list_no,
-.list_date {
-  margin: 0;
-} */
-
+.comment_date,
+.comment_writer,
 .detail_writer,
 .detail_date,
 .list_writer {
@@ -71,6 +72,7 @@ body {
   margin-bottom: 0;
 }
 
+.comment_date::before,
 .detail_date::before {
   content: "";
   display: inline-block;
@@ -79,6 +81,10 @@ body {
   background: #ccc;
   margin: 0 10px 0 6px;
   vertical-align: -2px;
+}
+
+.comment_writer {
+  cursor: pointer;
 }
 
 .date_box {
@@ -90,8 +96,8 @@ body {
   position: absolute;
   margin: 0 150px;
   top: 100px;
-  left: 0;
-  width: 80vw;
+  left: 9vw;
+  width: 65vw;
 }
 
 .modify_box {
@@ -160,6 +166,6 @@ body {
   padding: 0 40px;
 }
 
-.cmt-area{
+.cmt-area {
   padding: 40px;
 }
