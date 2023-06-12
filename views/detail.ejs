@@ -216,7 +216,18 @@
         const hour = date.getHours();
         const minute = date.getMinutes();
         const second = date.getSeconds();
-        const cmtTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+        const cmtTime = () => {
+          if (second < 10 && minute < 10) {
+            return `${year}.${month}.${day} ${hour}:0${minute}:0${second}`;
+          } else if (minute < 10) {
+            return `${year}.${month}.${day} ${hour}:0${minute}:${second}`;
+          } else if (second < 10) {
+            return `${year}.${month}.${day} ${hour}:${minute}:0${second}`;
+          } else {
+            return `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+          }
+        };
+
         e.preventDefault();
         if (commentValue.length <= 0) {
           swal({

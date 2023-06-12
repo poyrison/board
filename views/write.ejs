@@ -48,11 +48,16 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".submit").click((e) => {
-        swal("게시물을 작성했습니다.", {
-          icon: "success",
-        }).then((res) => {
-          location.replace("/");
-        });
+        if (
+          $("input#write_title").val().length > 0 &&
+          $("textarea#write_content").val().length > 0
+        ) {
+          swal("게시물을 작성했습니다.", {
+            icon: "success",
+          }).then((res) => {
+            location.replace("/");
+          });
+        }
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

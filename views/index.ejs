@@ -39,7 +39,9 @@
                 <p class="list_no">no. <%= posts[i]._id %></p>
               </div>
               <div>
-                <p class="list_date"><%= posts[i].date %></p>
+                <p class="list_date">
+                  <%= posts[i].date %> · <%= comments[i].length %>개의 댓글
+                </p>
               </div>
             </div>
             <h4 class="list_title"><%= posts[i].name %></h4>

@@ -85,7 +85,15 @@ app.get("/", (req, res) => {
   db.collection("post")
     .find()
     .toArray((err, result) => {
-      res.render("index.ejs", { posts: result, user: req.user });
+      db.collection("comment")
+        .find()
+        .toArray((err, result2) => {
+          res.render("index.ejs", {
+            posts: result,
+            user: req.user,
+            comments: result2,
+          });
+        });
     });
 });
 
@@ -237,9 +245,6 @@ passport.use(
 
 // =======  add  =======
 app.post("/add", upload.single("profile"), (req, res) => {
-  // res.send(
-  //   "<script>alert('게시물이 작성되었습니다.');location.href='/';</script>"
-  // );
   if (req.file) {
     db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
       console.log(result.totalPost);
@@ -251,7 +256,6 @@ app.post("/add", upload.single("profile"), (req, res) => {
         writerId: req.user.id,
         writer: req.user.name,
         date: todayDate,
-        // date: Date.now(),
         name: req.body.title,
         content: req.body.content,
         upload:
