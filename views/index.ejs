@@ -39,12 +39,14 @@
                 <p class="list_no">no. <%= posts[i]._id %></p>
               </div>
               <div>
-                <p class="list_date">
-                  <%= posts[i].date %> · <%= comments[i].length %>개의 댓글
-                </p>
+                <p class="list_date"><%= posts[i].date %></p>
               </div>
             </div>
-            <h4 class="list_title"><%= posts[i].name %></h4>
+            <h4 class="list_title">
+              <%if(posts[i].cmtCount){%> <%= posts[i].name %>
+              <b>[<%= posts[i].cmtCount %>]</b>
+              <%}else {%> <%= posts[i].name %> <%}%>
+            </h4>
             <div class="btnBox">
               <p class="list_writer">작성자: <%= posts[i].writer %></p>
               <!-- <div style="flex: 1"></div> -->

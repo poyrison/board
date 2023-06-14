@@ -123,7 +123,17 @@ app.post("/comment", (req, res) => {
     cmtWriter: req.body.cmtWriter,
     cmtDate: req.body.cmtTime,
   };
-  db.collection("comment").insertOne(saveComment, (err, result) => {});
+  db.collection("comment").insertOne(saveComment, (err, result) => {
+    db.collection("post").updateOne(
+      { _id: parseInt(req.body.id) },
+      {
+        $inc: {
+          cmtCount: +1,
+        },
+      },
+      (err, result) => {}
+    );
+  });
 });
 
 // =======  edit  =======
@@ -247,7 +257,6 @@ passport.use(
 app.post("/add", upload.single("profile"), (req, res) => {
   if (req.file) {
     db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-      console.log(result.totalPost);
       let totalPost = result.totalPost;
       const fileName = req.file.filename;
 
@@ -258,6 +267,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         date: todayDate,
         name: req.body.title,
         content: req.body.content,
+        cmtCount: 0,
         upload:
           path.basename(fileName, path.extname(fileName)) +
           path.extname(fileName),
@@ -287,6 +297,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         date: todayDate,
         name: req.body.title,
         content: req.body.content,
+        cmtCount: 0,
       };
 
       db.collection("post").insertOne(saveItem, () => {
