@@ -171,19 +171,30 @@ app.get("/signup", (req, res) => {
 });
 
 app.post("/signup", (req, res) => {
-  res.render("login.ejs");
-  bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
-    db.collection("login").insertOne(
-      { id: req.body.id, pw: hash, name: req.body.user_name },
-      () => {
-        console.log("============================");
-        console.log(`ID: ${req.body.id}`);
-        console.log(`PW: ${hash}`);
-        console.log(`Name: ${req.body.user_name}`);
-        console.log("저장 완료");
-        console.log("============================");
-      }
-    );
+  db.collection("login").findOne({ id: req.body.id }, (err, result) => {
+    if (result == null) {
+      bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
+        db.collection("login").insertOne(
+          { id: req.body.id, pw: hash, name: req.body.user_name },
+          () => {
+            console.log("============================");
+            console.log(`ID: ${req.body.id}`);
+            console.log(`PW: ${hash}`);
+            console.log(`Name: ${req.body.user_name}`);
+            console.log("저장 완료");
+            console.log("============================");
+            res.send(
+              "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>"
+            );
+          }
+        );
+      });
+    } else {
+      res.send(
+        "<script>alert('이미 사용중인 아이디입니다.');history.back();</script>"
+      );
+      // res.status(400).send({ message: "이미 사용중인 아이디입니다." });
+    }
   });
 });
 
