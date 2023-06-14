@@ -153,7 +153,8 @@ app.put("/edit", (req, res) => {
       $set: {
         name: req.body.name,
         content: req.body.content,
-        date: todayDate + "(수정됨)",
+        // date: todayDate + "(수정됨)",
+        date: req.body.date + "(수정됨)",
       },
     },
     (err, result) => {
