@@ -38,6 +38,9 @@
             <% if(user){ %>
             <a class="nav-link" href="/write">글쓰기</a>
             <a class="dropdown-item nav-link" href="/myPage">마이페이지</a>
+            <a class="dropdown-item nav-link" id="logout" href="/myPage"
+              >로그아웃</a
+            >
             <%}else{%>
             <a class="nav-link" href="/login">로그인</a>
             <a class="nav-link" href="/signUp">회원가입</a>
@@ -64,3 +67,32 @@
     </div>
   </nav>
 </div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+  $("#logout").click((e) => {
+    e.preventDefault();
+    swal({
+      title: "로그아웃 하시겠습니까?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        $.ajax({
+          method: "GET",
+          url: "/logout",
+        })
+          .done((result) => {
+            swal("로그아웃 완료", {
+              icon: "success",
+            }).then((res) => {
+              window.location.href = "/";
+            });
+          })
+          .fail((xhr, code, err) => {
+            console.log(xhr, code, err);
+          });
+      }
+    });
+  });
+</script>

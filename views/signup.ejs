@@ -82,6 +82,9 @@
                           >
                             회원가입
                           </button>
+                          <p class="mb-0 mt-4 text-center">
+                            <a href="/login" class="link">이미 회원이신가요?</a>
+                          </p>
                         </form>
                       </div>
                     </div>
@@ -93,13 +96,19 @@
         </div>
       </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $("#signup_btn").click((e) => {
-        swal("회원가입이 완료되었습니다.", {
-          icon: "success",
-        }).then((res) => {
-          window.location.replace("/login");
-        });
+        const logName = document.getElementById("#logname").val();
+        const logeMail = document.getElementById("#logemail").val();
+        const logPass = document.getElementById("#logpass").val();
+        if (logName.length && logName.length && logPass.length > 0) {
+          swal("회원가입이 완료되었습니다.", {
+            icon: "success",
+          }).then((res) => {
+            window.location.replace("/login");
+          });
+        }
       });
     </script>
 

@@ -8,7 +8,7 @@ const path = require("path");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const fs = require("fs");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); //암호화
 const saltRounds = 10;
 const router = express.Router();
 require("dotenv").config();
