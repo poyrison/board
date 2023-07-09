@@ -33,11 +33,16 @@
           <hr />
           <div class="content_box">
             <p class="card-text"><%= posts.content %></p>
+            <!-- <pre> 태그는 미리 정의된 형식의 텍스트를 HTML에 표현할 때 사용하는 태그다.
+              <pre> 태그 내의 텍스트는 시스템에 미리 지정된 고정폭 글꼴을 사용하며,
+              텍스트에 사용된 여백과 줄 바꿈을 그대로 브라우저 화면에 나타낸다. -->
+            <% if(posts.upload){%>
             <img
               src="../public/image/<%= posts.upload %>"
               alt="<%= posts.upload %>"
               style="max-width: 800px; max-height: 800px"
             />
+            <%}%>
           </div>
           <!-- 수정 및 삭제 --><!-- 수정 및 삭제 --><!-- 수정 및 삭제 -->
           <div class="modify_box">

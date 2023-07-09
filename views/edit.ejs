@@ -44,13 +44,23 @@
 <%= posts.content %></textarea
           >
         </div>
-        <div>
-          <button type="submit" class="btn btn-danger modify">수정</button>
+        <div class="flex modify_btn_area">
+          <button type="submit" class="btn btn-danger cancel modify_btn">취소</button>
+          <button type="submit" class="btn btn-danger modify modify_btn">수정</button>
         </div>
       </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
+      $(".cancel").click((e) => {
+        e.preventDefault()
+        swal("수정을 취소했습니다.", {
+          icon: "success",
+        }).then((res) => {
+          console.log("수정취소 완료");
+          location.replace("/detail/<%= posts._id %>");
+        });
+      });
       $(".modify").click((e) => {
         swal("수정을 완료했습니다!", {
           icon: "success",

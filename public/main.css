@@ -106,6 +106,10 @@ textarea {
   /* flex-flow: row-reverse; */
 }
 
+.modify_btn_area {
+  justify-content: flex-end;
+}
+
 .nav_area {
   height: 56px;
 }

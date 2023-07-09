@@ -34,11 +34,14 @@
             name="content"
             id="write_content"
             required
+            wrap="hard"
           ></textarea>
         </div>
         <div class="flex write_submit_btn">
           <input type="file" name="profile" />
-          <button type="submit" class="btn btn-danger submit">작성</button>
+          <button type="submit" class="btn btn-danger submit" id="write_submit">
+            작성
+          </button>
         </div>
       </form>
       <div class="alert alert-warning mt-3" role="alert">
@@ -48,17 +51,35 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".submit").click((e) => {
+        // const date = new Date();
+        // const year = date.getFullYear();
+        // const month = date.getMonth() + 1;
+        // const day = date.getDate();
+        // const hour = date.getHours();
+        // const minute = date.getMinutes();
+        // const second = date.getSeconds();
+        // const addTime = () => `${year}.${month}.${day}`;
+
         if (
           $("input#write_title").val().length > 0 &&
           $("textarea#write_content").val().length > 0
         ) {
-          swal("게시물을 작성했습니다.", {
-            icon: "success",
-          }).then((res) => {
-            location.replace("/");
-          });
+          swal({
+            title: "게시글을 작성하시겠습니까?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).done(
+            swal("게시글을 작성했습니다.", {
+              icon: "success",
+            }).then((res) => {
+              window.location.href = `/`;
+            })
+          );
         }
       });
+      // let text = $("textarea").val();
+      // text = text.replace(/(?:\r\n|\r|\n)/g, "<br>");
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
