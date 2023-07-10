@@ -11,6 +11,9 @@ const fs = require("fs");
 const bcrypt = require("bcrypt"); //암호화
 const saltRounds = 10;
 const router = express.Router();
+const moment = require("moment");
+require("moment-timezone");
+moment.tz.setDefault("Asia/Seoul");
 require("dotenv").config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,17 +30,8 @@ app.set("view engine", "ejs");
 let db;
 
 // 날짜
-const date = new Date();
-const year = date.getFullYear();
-const month = date.getMonth() + 1;
-const day = date.getDate();
-const hour = date.getHours();
-const minute = date.getMinutes();
-const second = date.getSeconds();
-const todayDate = `${year}.${month}.${day}`;
-const uploadTime = `${year}${month}${day}${hour}${minute}${second}`;
-const lastTime = `${hour}${minute}${second}`;
-const cmtTime = `${year}.${month}.${day} ${hour}:${minute}:${second}`;
+const addTime = moment().format("YYYY.MM.DD");
+const uploadTime = moment().format("YYYYMMDDHHmmss");
 
 let multer = require("multer");
 
@@ -274,7 +268,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         _id: totalPost + 1,
         writerId: req.user.id,
         writer: req.user.name,
-        date: todayDate,
+        date: addTime,
         name: req.body.title,
         content: req.body.content,
         cmtCount: 0,
@@ -304,7 +298,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         _id: totalPost + 1,
         writerId: req.user.id,
         writer: req.user.name,
-        date: todayDate,
+        date: addTime,
         name: req.body.title,
         content: req.body.content,
         cmtCount: 0,
