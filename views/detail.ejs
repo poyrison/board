@@ -38,12 +38,26 @@
               브라우저를 벗어나더라도 줄 바꿈이 일어나지 않는다.
               하지만 원하는 만큼 공백을 주거나 복잡한 단락 구조를 쉽게 표현할 수 있는 장점이 있으며,
               소스 표현할 때 많이 쓰인다.-->
-            <% if(posts.upload){%>
+            <% if(posts.upload){%> <% const str = posts.upload; const word =
+            str.split('.');if(word[1] == 'mp4'){%>
+            <video controls width="400" height="700">
+              <source
+                src="../public/image/<%= posts.upload %>"
+                type="video/webm"
+              />
+            </video>
+            <%}else {%>
+
             <img
               src="../public/image/<%= posts.upload %>"
               alt="<%= posts.upload %>"
               style="max-width: 800px; max-height: 800px"
+              title="<%= posts.upload %>"
+              onclick="window.open(this.src)"
             />
+            <%}%>
+            <!-- onclick="window.open(this.src)"
+                웹페이지의 새로운 탭에서 작아진 이미지의 원본을 확인할 수 있다. -->
             <%}%>
           </div>
           <!-- 수정 및 삭제 --><!-- 수정 및 삭제 --><!-- 수정 및 삭제 -->
@@ -98,6 +112,9 @@
               <span class="comment_date text-muted"
                 ><%= comments[i].cmtDate %></span
               >
+              <%if(user){%> <%if(comments[i].cmtWriter == user.name){%>
+              <span class="comment_delete text-muted">삭제</span>
+              <%} %> <%} %>
               <p style="margin: 0"><%= comments[i].cmtContent %></p>
               <hr />
             </li>
@@ -269,6 +286,33 @@
             }
           });
         }
+      });
+      $(".comment_delete").click((e) => {
+        swal({
+          title: "정말 삭제하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            $.ajax({
+              method: "DELETE",
+              url: "/cmdDelete",
+              data: {
+                _id: e.target.dataset.id,
+                writerId: e.target.dataset.writer_id,
+                writer: e.target.dataset.writer,
+              },
+            }).done(
+              swal("삭제를 완료했습니다!", {
+                icon: "success",
+              }).then((res) => {
+                console.log("삭제 완료");
+                location.reload();
+              })
+            );
+          }
+        });
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

@@ -148,7 +148,7 @@ app.put("/edit", (req, res) => {
         name: req.body.name,
         content: req.body.content,
         // date: todayDate + "(수정됨)",
-        date: `${req.body.date}(수정됨)`,
+        // date: `${req.body.date}`,
       },
     },
     (err, result) => {
@@ -363,6 +363,8 @@ app.delete("/delete", (req, res) => {
     console.log("게시물의 작성자가 아닙니다.");
   }
 });
+// =======  cmtDelete  =======
+app.delete("/cmtDelete", (req, res) => {});
 
 // =======  myPage  =======
 app.get("/myPage", loginCheck, (req, res) => {

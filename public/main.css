@@ -62,6 +62,14 @@ textarea {
   font-size: 12px;
 }
 
+.comment_delete {
+  cursor: pointer;
+}
+.comment_delete:hover {
+  text-decoration: underline;
+}
+
+.comment_delete,
 .comment_date,
 .comment_writer,
 .detail_writer,
