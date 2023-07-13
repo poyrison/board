@@ -39,7 +39,11 @@
               <div style="flex: 1"></div>
               <p class="list_date"><%= posts[i].date %></p>
             </div>
-            <h4 class="list_title"><%= posts[i].name %></h4>
+            <h4 class="list_title">
+              <%if(posts[i].cmtCount){%> <%= posts[i].name %>
+              <b>[<%= posts[i].cmtCount %>]</b>
+              <%}else {%> <%= posts[i].name %> <%}%>
+            </h4>
             <div class="btnBox">
               <p class="list_writer">작성자: <%= posts[i].writer %></p>
               <div style="flex: 1"></div>
@@ -58,12 +62,7 @@
       </ul>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script>
-      $("#search").click(() => {
-        let inputValue = $("#search_input").val();
-        window.location.replace(`/search?value=${inputValue}`);
-      });
-    </script>
+
     <script>
       $(".delete").click((e) => {
         e.preventDefault();

@@ -93,20 +93,28 @@ app.get("/", (req, res) => {
 
 // =======  detail  =======
 app.get("/detail/:id", (req, res) => {
-  db.collection("post").findOne(
-    { _id: parseInt(req.params.id) },
-    (err, result) => {
-      db.collection("comment")
-        .find({ parentAddress: parseInt(req.params.id) })
-        .toArray((err, result2) => {
+  const postId = parseInt(req.params.id);
+
+  db.collection("post")
+    .findOne({ _id: postId })
+    .then((post) => {
+      if (!post) {
+        return res.status(404).render("404.ejs");
+      }
+      return db
+        .collection("comment")
+        .find({ parentAddress: postId })
+        .toArray((err, comment) => {
           res.render("detail.ejs", {
-            posts: result,
+            posts: post,
             user: req.user,
-            comments: result2,
+            comments: comment,
           });
         });
-    }
-  );
+    })
+    .catch((err) => {
+      return res.status(500).render("500.ejs");
+    });
 });
 
 // =======  comment  =======
@@ -364,7 +372,25 @@ app.delete("/delete", (req, res) => {
   }
 });
 // =======  cmtDelete  =======
-app.delete("/cmtDelete", (req, res) => {});
+app.delete("/cmtDelete", (req, res) => {
+  req.body._id = parseInt(req.body._id);
+
+  db.collection("comment").deleteOne(
+    { parentAddress: req.body._id },
+    (err, result) => {
+      db.collection("post").updateOne(
+        { _id: parseInt(req.body.id) },
+        {
+          $inc: {
+            cmtCount: -1,
+          },
+        },
+        (err, result) => {}
+      );
+      res.status(200).send({ message: "성공했습니다." });
+    }
+  );
+});
 
 // =======  myPage  =======
 app.get("/myPage", loginCheck, (req, res) => {
@@ -409,6 +435,11 @@ app.get("/logout", (req, res, next) => {
     }
     res.send("<script>location.href='/'</script>");
   });
+});
+
+// 에러 처리
+app.all("*", function (req, res) {
+  res.status(404).render("error.ejs");
 });
 
 // app.use("/shop", require("./routes/shop"));

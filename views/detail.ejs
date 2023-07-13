@@ -40,14 +40,13 @@
               소스 표현할 때 많이 쓰인다.-->
             <% if(posts.upload){%> <% const str = posts.upload; const word =
             str.split('.');if(word[1] == 'mp4'){%>
-            <video controls width="400" height="700">
+            <video controls width="400" height="700" id="video">
               <source
                 src="../public/image/<%= posts.upload %>"
                 type="video/webm"
               />
             </video>
             <%}else {%>
-
             <img
               src="../public/image/<%= posts.upload %>"
               alt="<%= posts.upload %>"
@@ -113,7 +112,12 @@
                 ><%= comments[i].cmtDate %></span
               >
               <%if(user){%> <%if(comments[i].cmtWriter == user.name){%>
-              <span class="comment_delete text-muted">삭제</span>
+              <span
+                class="comment_delete text-muted"
+                data-user_id="<%= user.id %>"
+                data-id="<%= posts._id %>"
+                >삭제</span
+              >
               <%} %> <%} %>
               <p style="margin: 0"><%= comments[i].cmtContent %></p>
               <hr />
@@ -171,6 +175,10 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
+      // 비디오 볼륨 조절
+      document.querySelector("#video")
+        ? (document.querySelector("#video").volume = 0.3)
+        : null;
       $(".delete").click((e) => {
         swal({
           title: "정말 삭제하시겠습니까?",
@@ -301,7 +309,6 @@
               data: {
                 _id: e.target.dataset.id,
                 writerId: e.target.dataset.writer_id,
-                writer: e.target.dataset.writer,
               },
             }).done(
               swal("삭제를 완료했습니다!", {

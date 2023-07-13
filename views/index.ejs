@@ -60,8 +60,17 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $("#search").click(() => {
-        let inputValue = $("#search_input").val();
-        location.replace(`/search?value=${inputValue}`);
+        $("#search").click(() => {
+          let searchValue = $("#search_input").val();
+          if (searchValue.length == 0) {
+            swal("검색어를 입력해주세요", {
+              icon: "warning",
+            });
+          } else {
+            let inputValue = $("#search_input").val();
+            window.location.replace(`/search?value=${inputValue}`);
+          }
+        });
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
