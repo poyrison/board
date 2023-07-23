@@ -105,6 +105,7 @@ app.get("/detail/:id", (req, res) => {
         .collection("comment")
         .find({ parentAddress: postId })
         .toArray((err, comment) => {
+          console.log(comment);
           res.render("detail.ejs", {
             posts: post,
             user: req.user,
@@ -119,22 +120,34 @@ app.get("/detail/:id", (req, res) => {
 
 // =======  comment  =======
 app.post("/comment", (req, res) => {
-  let saveComment = {
-    cmtContent: req.body.comment,
-    parentAddress: parseInt(req.body.id),
-    cmtWriter: req.body.cmtWriter,
-    cmtDate: req.body.cmtTime,
-  };
-  db.collection("comment").insertOne(saveComment, (err, result) => {
-    db.collection("post").updateOne(
-      { _id: parseInt(req.body.id) },
-      {
-        $inc: {
-          cmtCount: +1,
+  db.collection("counter").findOne({ name: "댓글갯수" }, (err, result) => {
+    let totalComment = result.totalComment;
+
+    let saveComment = {
+      cmtNo: totalComment + 1,
+      cmtContent: req.body.comment,
+      parentAddress: parseInt(req.body.id),
+      cmtWriter: req.body.cmtWriter,
+      cmtDate: req.body.cmtTime,
+    };
+    db.collection("comment").insertOne(saveComment, (err, result) => {
+      db.collection("counter").updateOne(
+        { name: "댓글갯수" },
+        { $inc: { totalComment: 1 } },
+        (err, result) => {
+          if (err) throw err;
+        }
+      );
+      db.collection("post").updateOne(
+        { _id: parseInt(req.body.id) },
+        {
+          $inc: {
+            cmtCount: 1,
+          },
         },
-      },
-      (err, result) => {}
-    );
+        (err, result) => {}
+      );
+    });
   });
 });
 
@@ -356,7 +369,6 @@ app.delete("/delete", (req, res) => {
         }
       });
     } else {
-      // console.log(`=== 삭제한 게시물 번호: ${req.body._id} ===`);
       db.collection("post").deleteOne(req.body, (err, result) => {
         db.collection("comment").deleteMany(
           { parentAddress: req.body._id },
@@ -371,15 +383,18 @@ app.delete("/delete", (req, res) => {
     console.log("게시물의 작성자가 아닙니다.");
   }
 });
+
 // =======  cmtDelete  =======
 app.delete("/cmtDelete", (req, res) => {
   req.body._id = parseInt(req.body._id);
+  req.body.cmtNo = parseInt(req.body.cmtNo);
 
   db.collection("comment").deleteOne(
-    { parentAddress: req.body._id },
+    { cmtNo: req.body.cmtNo },
     (err, result) => {
+      req.body.cmtNo ? console.log(`${req.body.cmtNo}번 댓글 삭제`) : null;
       db.collection("post").updateOne(
-        { _id: parseInt(req.body.id) },
+        { _id: req.body._id },
         {
           $inc: {
             cmtCount: -1,

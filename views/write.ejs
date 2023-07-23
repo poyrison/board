@@ -51,36 +51,63 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      $(".submit").click((e) => {
-        // const date = new Date();
-        // const year = date.getFullYear();
-        // const month = date.getMonth() + 1;
-        // const day = date.getDate();
-        // const hour = date.getHours();
-        // const minute = date.getMinutes();
-        // const second = date.getSeconds();
-        // const addTime = () => `${year}.${month}.${day}`;
+      $(document).ready(() => {
+        // textarea 값을 읽어와서 개행 문자를 <br> 태그로 변경하는 함수
+        const processNewLines = () => {
+          const textareaValue = $("textarea#write_content").val();
+          const contentDiv = $("div#write_content");
 
-        if (
-          $("input#write_title").val().length > 0 &&
-          $("textarea#write_content").val().length > 0
-        ) {
-          swal({
-            title: "게시글을 작성하시겠습니까?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          }).done(
-            swal("게시글을 작성했습니다.", {
-              icon: "success",
-            }).then((res) => {
-              window.location.href = `/`;
-            })
+          // 개행 문자(\r\n, \r, \n)을 <br> 태그로 변경하여 <div>에 적용
+          const formattedText = textareaValue.replace(
+            /(?:\r\n|\r|\n)/g,
+            "<br>"
           );
-        }
+          contentDiv.html(formattedText);
+        };
+
+        // textarea에서 키를 누를 때마다 개행 처리 함수 호출
+        $("textarea#write_content").on("keydown", (e) => {
+          // keyCode 13은 Enter 키를 의미
+          if (e.keyCode === 13) {
+            // textarea에서 개행 문자를 추가하여 내용 갱신
+            const textarea = $("textarea#write_content");
+            const currentValue = textarea.val();
+            const cursorPosition = textarea.prop("selectionStart");
+            const newValue =
+              currentValue.substring(0, cursorPosition) +
+              "\n" +
+              currentValue.substring(cursorPosition);
+            textarea.val(newValue);
+            // 개행 처리 함수 호출하여 <div>에 적용
+            processNewLines();
+          }
+        });
+
+        // 게시글 작성 버튼 클릭 이벤트 처리
+        $(".submit").click((e) => {
+          // 내용이 개행 처리된 상태로 form 데이터 전송
+          processNewLines();
+
+          if (
+            $("input#write_title").val().length > 0 &&
+            $("div#write_content").html().length > 0 // <div>에 변경된 내용이 있을 때 검사
+          ) {
+            swal({
+              title: "게시글을 작성하시겠습니까?",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+            }).done(
+              swal("게시글을 작성했습니다.", {
+                icon: "success",
+              }).then((res) => {
+                // 서버로 데이터 전송하는 부분 추가
+                // window.location.href = `/`;
+              })
+            );
+          }
+        });
       });
-      // let text = $("textarea").val();
-      // text = text.replace(/(?:\r\n|\r|\n)/g, "<br>");
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

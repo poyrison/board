@@ -111,9 +111,11 @@
               <span class="comment_date text-muted"
                 ><%= comments[i].cmtDate %></span
               >
-              <%if(user){%> <%if(comments[i].cmtWriter == user.name){%>
+              <%if(user){%> <%if(comments[i].cmtWriter == user.name || user.id
+              == 'manager'){%>
               <span
                 class="comment_delete text-muted"
+                data-cmt_no="<%= comments[i].cmtNo %>"
                 data-user_id="<%= user.id %>"
                 data-id="<%= posts._id %>"
                 >삭제</span
@@ -296,6 +298,7 @@
         }
       });
       $(".comment_delete").click((e) => {
+        console.log(`cmtNo: ${e.target.dataset.cmt_no}`);
         swal({
           title: "정말 삭제하시겠습니까?",
           icon: "warning",
@@ -305,10 +308,10 @@
           if (willDelete) {
             $.ajax({
               method: "DELETE",
-              url: "/cmdDelete",
+              url: "/cmtDelete",
               data: {
                 _id: e.target.dataset.id,
-                writerId: e.target.dataset.writer_id,
+                cmtNo: e.target.dataset.cmt_no,
               },
             }).done(
               swal("삭제를 완료했습니다!", {

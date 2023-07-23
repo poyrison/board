@@ -14,15 +14,12 @@
         justify-content: center;
         flex-direction: column;
       }
-      #err-icon {
-        color: yellow;
-      }
       #err-title {
         color: #eee;
       }
       #home-btn {
         padding: 10px 20px;
-        border-radius: 30px;
+        border-radius: 4px;
         background-color: rgb(255, 145, 0);
         cursor: pointer;
         /* color: #eee; */
@@ -35,9 +32,10 @@
   <body>
     <!-- <div id="err-icon">⚠</div> -->
     <div>
-      <h1 id="err-title">
-        <span id="err-icon">⚠</span> 500 Internal Server Error
-      </h1>
+      <img src="..\public\icon\500-error.png" />
+    </div>
+    <div>
+      <h1 id="err-title">500 Internal Server Error</h1>
     </div>
     <div type="button" id="home-btn" onclick="homeBtn()"><b>홈으로</b></div>
     <script>
