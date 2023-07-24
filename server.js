@@ -305,7 +305,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
           { name: "게시물갯수" },
           { $inc: { totalPost: 1 } },
           (err, result) => {
-            if (err) throw err;
+            if (err) res.sendFile(__dirname + "500.ejs");
           }
         );
       });
@@ -331,7 +331,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
           { name: "게시물갯수" },
           { $inc: { totalPost: 1 } },
           (err, result) => {
-            if (err) throw err;
+            if (err) res.sendFile(__dirname + "500.ejs");
           }
         );
       });

@@ -5,6 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= posts.name %></title>
+    <!-- JENNIFER Front 모니터링 -->
+    <script>
+      (function (j, ennifer) {
+        j["dmndata"] = [];
+        j["jenniferFront"] = function (args) {
+          window.dmndata.push(args);
+        };
+        j["dmnaid"] = ennifer;
+        j["dmnatime"] = new Date();
+        j["dmnanocookie"] = false;
+        j["dmnajennifer"] = "JENNIFER_FRONT@INTG";
+      })(window, "1a32e5f6");
+    </script>
     <!-- 부트스트랩 -->
     <link
       rel="stylesheet"
@@ -32,7 +45,9 @@
           </div>
           <hr />
           <div class="content_box">
-            <p class="card-text"><%= posts.content %></p>
+            <p class="card-text" style="white-space: pre-line">
+              <%= posts.content %>
+            </p>
             <!--pre> 는 형태를 그대로 유지할 수 있지만 각 영역별로 서식을 꾸밀 수 없다.
               모든 텍스트는 시스템에서 지정한 폰트를 사용하게 되고 글이 길어 져서
               브라우저를 벗어나더라도 줄 바꿈이 일어나지 않는다.
@@ -139,6 +154,7 @@
               id="cmt-write-area"
               class="form-control"
               maxlength="300"
+              placeholder="send a message"
             ></textarea>
             <button
               type="submit"
@@ -298,7 +314,6 @@
         }
       });
       $(".comment_delete").click((e) => {
-        console.log(`cmtNo: ${e.target.dataset.cmt_no}`);
         swal({
           title: "정말 삭제하시겠습니까?",
           icon: "warning",
@@ -325,6 +340,10 @@
         });
       });
     </script>
+    <script
+      async
+      src="https://d-collect.jennifersoft.com/1a32e5f6/demian.js"
+    ></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"

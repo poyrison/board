@@ -5,6 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>게시판</title>
+    <!-- JENNIFER Front 모니터링 -->
+    <script>
+      (function (j, ennifer) {
+        j["dmndata"] = [];
+        j["jenniferFront"] = function (args) {
+          window.dmndata.push(args);
+        };
+        j["dmnaid"] = ennifer;
+        j["dmnatime"] = new Date();
+        j["dmnanocookie"] = false;
+        j["dmnajennifer"] = "JENNIFER_FRONT@INTG";
+      })(window, "1a32e5f6");
+    </script>
     <!-- 부트스트랩 -->
     <link
       rel="stylesheet"
@@ -73,6 +86,10 @@
         });
       });
     </script>
+    <script
+      async
+      src="https://d-collect.jennifersoft.com/c2139738/demian.js"
+    ></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
