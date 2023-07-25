@@ -180,3 +180,8 @@ textarea {
 .cmt-area {
   padding: 40px;
 }
+
+.card-text {
+  margin: 0;
+  white-space: pre-line;
+}
