@@ -32,6 +32,9 @@
     <div class="container">
       <form method="POST" action="/add" enctype="multipart/form-data">
         <div class="form-group">
+          <div style="visibility: hidden">
+            <input id="addDate" name="addDate"></input>
+          </div>
           <label for="write_title">제목</label>
           <input
             type="text"
@@ -65,15 +68,6 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".submit").click((e) => {
-        // const date = new Date();
-        // const year = date.getFullYear();
-        // const month = date.getMonth() + 1;
-        // const day = date.getDate();
-        // const hour = date.getHours();
-        // const minute = date.getMinutes();
-        // const second = date.getSeconds();w
-        // const addTime = () => `${year}.${month}.${day}`;
-
         if (
           $("input#write_title").val().length > 0 &&
           $("textarea#write_content").val().length > 0
@@ -100,6 +94,16 @@
       };
       // let text = $("textarea").val();
       // text = text.replace(/(?:\r\n|\r|\n)/g, "<br>");
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hour = date.getHours();
+      const minute = date.getMinutes();
+      const second = date.getSeconds();
+      const addTime = () => `${year}.${month}.${day}`;
+
+      document.getElementById("addDate").value = addTime();
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

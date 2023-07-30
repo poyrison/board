@@ -30,7 +30,6 @@ app.set("view engine", "ejs");
 let db;
 
 // 날짜
-const addTime = moment().format("YYYY.MM.DD");
 const uploadTime = moment().format("YYYYMMDDHHmmss");
 
 let multer = require("multer");
@@ -289,7 +288,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         _id: totalPost + 1,
         writerId: req.user.id,
         writer: req.user.name,
-        date: addTime,
+        date: req.body.addDate,
         name: req.body.title,
         content: req.body.content,
         cmtCount: 0,
@@ -319,7 +318,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         _id: totalPost + 1,
         writerId: req.user.id,
         writer: req.user.name,
-        date: addTime,
+        date: req.body.addDate,
         name: req.body.title,
         content: req.body.content,
         cmtCount: 0,
