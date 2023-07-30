@@ -185,3 +185,18 @@ textarea {
   margin: 0;
   white-space: pre-line;
 }
+
+.CommentCount_container {
+  gap: 0.8rem;
+}
+
+.CommentCount_icon {
+  display: flex;
+  align-items: center;
+  padding-left: 2.5em;
+}
+
+.CommentCount_icon h5 {
+  margin: 0;
+  padding-left: 0.5rem;
+}
