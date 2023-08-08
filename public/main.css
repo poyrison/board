@@ -63,6 +63,7 @@ textarea {
 }
 
 .list_title_box {
+  justify-content: center;
   display: flex;
   padding: 0 25%;
 }
