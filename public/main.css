@@ -4,7 +4,6 @@
 
 body {
   margin: 0;
-  height: 100vh;
 }
 
 textarea {
@@ -16,8 +15,8 @@ textarea {
 }
 
 .container {
-  height: 90vh;
-  align-items: center;
+  margin-top: 3%;
+  margin-bottom: 3%;
 }
 
 .form-group {
@@ -114,11 +113,8 @@ textarea {
 }
 
 .card {
-  position: absolute;
-  margin: 0 150px;
-  top: 100px;
-  left: 9vw;
-  width: 65vw;
+  /* left: 9vw;
+  width: 65vw; */
 }
 
 .modify_box {
@@ -194,9 +190,13 @@ textarea {
   padding: 40px;
 }
 
-.card-text {
+.card-text,
+.card-content {
   margin: 0;
   white-space: pre-line;
+}
+#card-content {
+  min-height: 300px;
 }
 
 .CommentCount_container {
