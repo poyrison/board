@@ -62,12 +62,15 @@ textarea {
   font-size: 12px;
 }
 
-.list_title {
+.list_title_box {
+  display: flex;
   padding: 0 25%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* 텍스트 길이가 길어졌을때 마지막을 ...으로 마무리 */
+}
+
+.list_title {
+  white-space: nowrap; /* 공백을 무시하고 한 줄로 텍스트를 표시 */
+  overflow: hidden; /* 텍스트가 너비를 초과할 경우 숨김 처리 */
+  text-overflow: ellipsis; /* 초과된 텍스트는 생략 부호(...)로 표시 */
   /* text-transform: capitalize; 대문자*/
 }
 

@@ -55,11 +55,14 @@
                 <p class="list_date"><%= posts[i].date %></p>
               </div>
             </div>
-            <h4 class="list_title">
-              <%if(posts[i].cmtCount){%> <%= posts[i].name %>
-              <b>[<%= posts[i].cmtCount %>]</b>
-              <%}else {%> <%= posts[i].name %> <%}%>
-            </h4>
+            <div class="list_title_box">
+              <% if(posts[i].cmtCount) {%>
+              <h4 class="list_title"><%= posts[i].name %></h4>
+              <h4 class="list_cmtNo"><b>[<%= posts[i].cmtCount %>]</b></h4>
+              <%}else{%>
+              <h4 class="list_title"><%= posts[i].name %></h4>
+              <%}%>
+            </div>
             <div class="btnBox">
               <p class="list_writer">작성자: <%= posts[i].writer %></p>
               <!-- <div style="flex: 1"></div> -->
