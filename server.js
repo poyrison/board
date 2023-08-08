@@ -173,9 +173,6 @@ app.put("/edit", (req, res) => {
     },
     (err, result) => {
       // res.redirect(`/detail/${req.body.id}`);
-      // console.log(
-      //   `글번호: ${req.body.id}, 제목: ${req.body.name}, 내용: ${req.body.content} 날짜: ${req.body.date}`
-      // );
     }
   );
 });
@@ -192,10 +189,6 @@ app.post("/signup", (req, res) => {
         db.collection("login").insertOne(
           { id: req.body.id, pw: hash, name: req.body.user_name },
           () => {
-            // console.log(`ID: ${req.body.id}`);
-            // console.log(`PW: ${hash}`);
-            // console.log(`Name: ${req.body.user_name}`);
-            // console.log("저장 완료");
             res.send(
               "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>"
             );
@@ -232,7 +225,6 @@ app.post("/login", (req, res, next) => {
       }
       const filteredUser = { ...user.dataValues };
       delete filteredUser.psword;
-      console.log(`${user.name} 로그인`);
       return res.redirect("/");
     });
   })(req, res, next);
@@ -297,9 +289,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
           path.extname(fileName),
       };
 
-      console.log(req.file.filename);
       db.collection("post").insertOne(saveItem, () => {
-        console.log("저장 완료");
         db.collection("counter").updateOne(
           { name: "게시물갯수" },
           { $inc: { totalPost: 1 } },
@@ -311,7 +301,6 @@ app.post("/add", upload.single("profile"), (req, res) => {
     });
   } else {
     db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-      console.log(result.totalPost);
       let totalPost = result.totalPost;
 
       let saveItem = {
@@ -325,7 +314,6 @@ app.post("/add", upload.single("profile"), (req, res) => {
       };
 
       db.collection("post").insertOne(saveItem, () => {
-        console.log("저장 완료");
         db.collection("counter").updateOne(
           { name: "게시물갯수" },
           { $inc: { totalPost: 1 } },

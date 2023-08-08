@@ -62,6 +62,15 @@ textarea {
   font-size: 12px;
 }
 
+.list_title {
+  padding: 0 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* 텍스트 길이가 길어졌을때 마지막을 ...으로 마무리 */
+  /* text-transform: capitalize; 대문자*/
+}
+
 .comment_delete {
   cursor: pointer;
 }
