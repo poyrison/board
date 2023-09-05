@@ -33,13 +33,13 @@
   </head>
   <body>
     <%- include('nav.ejs') %>
-    <div class="input-group mb-2">
-      <input class="form-control" id="search_input" />
-      <button class="input-group-append btn btn-success" id="search">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
     <div class="container">
+      <div class="input-group mb-2">
+        <input class="form-control" id="search_input" />
+        <button class="input-group-append btn btn-success" id="search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
       <ul class="list-group p-5">
         <% for(let i = 0; i < posts.length; i++){ %>
         <a href="/detail/<%= posts[i]._id %>" id="link">
@@ -65,13 +65,29 @@
             </div>
             <div class="btnBox">
               <p class="list_writer">작성자: <%= posts[i].writer %></p>
-              <!-- <div style="flex: 1"></div> -->
             </div>
           </li>
         </a>
         <hr />
         <% } %>
       </ul>
+      <!-- 페이지네이션 시작 -->
+      <!-- <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav> -->
+      <!-- 페이지네이션 끝 -->
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>

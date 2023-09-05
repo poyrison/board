@@ -33,7 +33,7 @@
   </head>
   <body>
     <%- include('nav.ejs') %>
-    <div class="container">
+    <div class="container" id="detail_container">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title"><%= posts.name %></h5>
@@ -72,7 +72,7 @@
                 웹페이지의 새로운 탭에서 작아진 이미지의 원본을 확인할 수 있다. -->
             <%}%>
           </div>
-          <!-- 수정 및 삭제 --><!-- 수정 및 삭제 --><!-- 수정 및 삭제 -->
+          <!-- 수정 및 삭제 시작 -->
           <div class="modify_box">
             <% if(user){%> <% if( user.id == posts.writerId){ %>
             <div>
@@ -108,9 +108,10 @@
             </button>
             <%}%> <%} %>
           </div>
+          <!-- 수정 및 삭제 끝 -->
         </div>
         <hr />
-        <!-- 댓글 --><!-- 댓글 --><!-- 댓글 --><!-- 댓글 -->
+        <!-- 댓글 시작 -->
         <div>
           <div class="CommentCount_container">
             <div class="CommentCount_icon">
@@ -158,8 +159,9 @@
             <%}%>
           </ul>
         </div>
+        <!-- 댓글 끝 -->
         <div>
-          <!-- 댓글 작성란 --><!-- 댓글 작성란 --><!-- 댓글 작성란 --><!-- 댓글 작성란 -->
+          <!-- 댓글 작성란 시작 -->
           <% if(user){ %>
           <form class="cmt-form" method="POST" action="/comment">
             <textarea
@@ -201,6 +203,7 @@
             </button>
           </form>
           <% }%>
+          <!-- 댓글 작성란 끝 -->
         </div>
       </div>
     </div>

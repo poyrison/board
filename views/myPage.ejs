@@ -18,12 +18,12 @@
     <%- include('nav.ejs') %>
     <div class="container">
       <p><%= user.name %>님의 마이페이지입니다.</p>
-      <button class="btn btn-danger" id="logout">로그아웃</button>
+      <button class="btn btn-danger" id="logoutInMyPage">로그아웃</button>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      $("#logout").click((e) => {
+      $("#logoutInMyPage").click((e) => {
         swal({
           title: "로그아웃 하시겠습니까?",
           icon: "warning",
