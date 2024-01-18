@@ -409,10 +409,10 @@ app.get("/search", (req, res) => {
   let searchCondition = [
     {
       $search: {
-        index: "titleSearch",
+        index: "title_index",
         text: {
           query: req.query.value,
-          path: "name", // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+          path: "title", // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
         },
       },
     },
@@ -426,6 +426,9 @@ app.get("/search", (req, res) => {
       res.render("search.ejs", { posts: result, user: req.user });
     });
 });
+// app.get('/search', async (req, res) => {
+//   let result = await db.collection("post").find({$text : {req.query.value}})
+// })
 
 // =======  logout  =======
 app.get("/logout", (req, res, next) => {
