@@ -20,11 +20,13 @@
   </head>
   <body>
     <%- include('nav.ejs') %>
-    <div class="input-group mb-2">
-      <input class="form-control" id="search_input" />
-      <button class="input-group-append btn btn-success" id="search">
-        <i class="bi bi-search"></i>
-      </button>
+    <div class="container">
+      <div class="input-group mb-2">
+        <input class="form-control" id="search_input" />
+        <button class="input-group-append btn btn-success" id="search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
     </div>
     <div class="container">
       <ul class="list-group p-5">
@@ -69,5 +71,20 @@
       integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
       crossorigin="anonymous"
     ></script>
+    <script>
+      $("#search_input").on("keypress", (e) => {
+        if (e.key === "Enter") {
+          let searchValue = $("#search_input").val();
+          if (searchValue.length == 0) {
+            swal("검색어를 입력해주세요", {
+              icon: "warning",
+            });
+          } else {
+            let inputValue = $("#search_input").val();
+            window.location.replace(`/search?value=${inputValue}`);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
