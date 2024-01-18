@@ -104,7 +104,6 @@ app.get("/detail/:id", (req, res) => {
         .collection("comment")
         .find({ parentAddress: postId })
         .toArray((err, comment) => {
-          console.log(comment);
           res.render("detail.ejs", {
             posts: post,
             user: req.user,
@@ -165,7 +164,7 @@ app.put("/edit", (req, res) => {
     { _id: parseInt(req.body.id) },
     {
       $set: {
-        name: req.body.name,
+        title: req.body.name,
         content: req.body.content,
         // date: todayDate + "(수정됨)",
         // date: `${req.body.date}`,
@@ -281,7 +280,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         writerId: req.user.id,
         writer: req.user.name,
         date: req.body.addDate,
-        name: req.body.title,
+        title: req.body.title,
         content: req.body.content,
         cmtCount: 0,
         upload:
@@ -308,7 +307,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         writerId: req.user.id,
         writer: req.user.name,
         date: req.body.addDate,
-        name: req.body.title,
+        title: req.body.title,
         content: req.body.content,
         cmtCount: 0,
       };
