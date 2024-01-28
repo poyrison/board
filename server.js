@@ -208,7 +208,7 @@ app.post("/signup", async (req, res) => {
   const idRegex = /^[a-z0-9_-]{6,16}$/; // 아이디 정규식
   const pwRegex = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}$/; // 비밀번호 정규식
 
-  const nameErrorMessage = "이름을 2 ~ 8자 이내로 입력해주세요.";
+  const nameErrorMessage = "이름을 2 ~ 8자 이내의 한글로 입력해주세요.";
   const idErrorMessage =
     "아이디 형식은 영문과 숫자로만 구성되어야 합니다. 다른 문자나 특수문자는 사용할 수 없습니다.";
   const pwErrorMessage =
