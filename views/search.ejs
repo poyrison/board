@@ -26,6 +26,19 @@
         <button class="input-group-append btn btn-success" id="search">
           <i class="bi bi-search"></i>
         </button>
+        <% if(user) { %>
+        <a href="/write">
+          <button class="input-group-append btn btn-primary">
+            <i class="bi bi-pen"></i>
+          </button>
+        </a>
+        <% } else { %>
+        <a href="/write" class="loginCheck">
+          <button class="input-group-append btn btn-primary">
+            <i class="bi bi-pen"></i>
+          </button>
+        </a>
+        <% } %>
       </div>
     </div>
     <div class="container">
@@ -84,6 +97,28 @@
             window.location.replace(`/search?value=${inputValue}`);
           }
         }
+      });
+      $(".loginCheck").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "글 쓰기는 로그인 후 이용가능합니다.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((loginCheck) => {
+          if (loginCheck) {
+            $.ajax({
+              method: "GET",
+              url: "/write",
+            })
+              .done((result) => {
+                window.location.href = "/write";
+              })
+              .fail((xhr, code, err) => {
+                console.log(xhr, code, err);
+              });
+          }
+        });
       });
     </script>
   </body>

@@ -68,7 +68,7 @@ const loginCheck = (req, res, next) => {
   } else {
     res.send(
       // history.back(); // 이전 페이지
-      `<script>alert('로그인 후 이용가능합니다.');location.href='/login';</script>`
+      `<script>location.href='/login';</script>`
     );
   }
 };
@@ -259,7 +259,7 @@ passport.use(
             if (res) {
               return done(null, result);
             } else if (result) {
-              return done(null, false, { message: "패스워드를 확인해주세요." });
+              return done(null, false, { message: "비밀번호를 확인해주세요." });
             }
           });
         }
