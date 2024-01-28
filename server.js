@@ -181,26 +181,77 @@ app.get("/signup", (req, res) => {
   res.render("signup.ejs", { user: req.user });
 });
 
-app.post("/signup", (req, res) => {
-  db.collection("login").findOne({ id: req.body.id }, (err, result) => {
-    if (result == null) {
-      bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
-        db.collection("login").insertOne(
-          { id: req.body.id, pw: hash, name: req.body.user_name },
-          () => {
-            res.send(
-              "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>"
-            );
-          }
-        );
-      });
-    } else {
-      res.send(
-        "<script>alert('이미 사용중인 아이디입니다.');history.back();</script>"
-      );
-      // res.status(400).send({ message: "이미 사용중인 아이디입니다." });
+// app.post("/signup", (req, res) => {
+//   db.collection("login").findOne({ id: req.body.id }, (err, result) => {
+//     if (result == null) {
+//       bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
+//         db.collection("login").insertOne(
+//           { id: req.body.id, pw: hash, name: req.body.user_name },
+//           () => {
+//             res.send(
+//               "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>"
+//             );
+//           }
+//         );
+//       });
+//     } else {
+//       res.send(
+//         "<script>alert('이미 사용중인 아이디입니다.');history.back();</script>"
+//       );
+//       res.status(400).send({ message: "이미 사용중인 아이디입니다." });
+//     }
+//   });
+// });s
+
+app.post("/signup", async (req, res) => {
+  const nameRegex = /^[가-힣]{2,8}$/; // 이름 정규식
+  const idRegex = /^[a-z0-9_-]{6,16}$/; // 아이디 정규식
+  const pwRegex = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,16}$/; // 비밀번호 정규식
+
+  const nameErrorMessage = "이름을 2 ~ 8자 이내로 입력해주세요.";
+  const idErrorMessage =
+    "아이디 형식은 영문과 숫자로만 구성되어야 합니다. 다른 문자나 특수문자는 사용할 수 없습니다.";
+  const pwErrorMessage =
+    "비밀번호 형식은 영문 최소 하나의 특수문자를 포함하여 6 ~ 16자 사이여야 합니다.";
+  const duplicateIdErrorMessage = "이미 사용중인 아이디입니다.";
+
+  const userName = req.body.userName;
+  const id = req.body.id;
+  const pw = req.body.pw;
+
+  if (!nameRegex.test(userName)) {
+    const errorMessage = `<script>alert('${nameErrorMessage}');history.back();</script>`;
+    return res.status(400).send(errorMessage);
+  }
+
+  if (!idRegex.test(id)) {
+    const errorMessage = `<script>alert('${idErrorMessage}');history.back();</script>`;
+    return res.status(400).send(errorMessage);
+  }
+
+  if (!pwRegex.test(pw)) {
+    const errorMessage = `<script>alert('${pwErrorMessage}');history.back();</script>`;
+    return res.status(400).send(errorMessage);
+  }
+
+  try {
+    const existingUser = await db.collection("login").findOne({ id: id });
+    if (existingUser) {
+      const errorMessage = `<script>alert('${duplicateIdErrorMessage}');history.back();</script>`;
+      return res.status(400).send(errorMessage);
     }
-  });
+
+    const hash = await bcrypt.hash(pw, saltRounds);
+    await db
+      .collection("login")
+      .insertOne({ id: id, pw: hash, name: userName });
+    const successMessage =
+      "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>";
+    res.send(successMessage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
 });
 
 // =======  login  =======

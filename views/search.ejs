@@ -85,6 +85,17 @@
       crossorigin="anonymous"
     ></script>
     <script>
+      $("#search").click(() => {
+        let searchValue = $("#search_input").val();
+        if (searchValue.length == 0) {
+          swal("검색어를 입력해주세요", {
+            icon: "warning",
+          });
+        } else {
+          let inputValue = $("#search_input").val();
+          window.location.replace(`/search?value=${inputValue}`);
+        }
+      });
       $("#search_input").on("keypress", (e) => {
         if (e.key === "Enter") {
           let searchValue = $("#search_input").val();

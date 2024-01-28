@@ -35,7 +35,7 @@
                           <div class="form-group">
                             <input
                               type="text"
-                              name="user_name"
+                              name="userName"
                               class="form-style"
                               placeholder="이름"
                               id="logname"
@@ -56,7 +56,7 @@
                               id="logemail"
                               required
                               minlength="6"
-                              maxlength="15"
+                              maxlength="16"
                               autocomplete="off"
                             />
                             <i class="input-icon uil uil-at"></i>
@@ -70,7 +70,7 @@
                               id="logpass"
                               required
                               minlength="8"
-                              maxlength="15"
+                              maxlength="16"
                               autocomplete="off"
                             />
                             <i class="input-icon uil uil-lock-alt"></i>
@@ -98,18 +98,18 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      $("#signup_btn").click((e) => {
-        const logName = document.getElementById("#logname").val();
-        const logeMail = document.getElementById("#logemail").val();
-        const logPass = document.getElementById("#logpass").val();
-        if (logName.length && logName.length && logPass.length > 0) {
-          swal("회원가입이 완료되었습니다.", {
-            icon: "success",
-          }).then((res) => {
-            window.location.replace("/login");
-          });
-        }
-      });
+      // const logName = document.getElementById("#logname").val();
+      // const logeMail = document.getElementById("#logemail").val();
+      // const logPass = document.getElementById("#logpass").val();
+      // $("#signup_btn").click((e) => {
+      //   if (logName.length && logName.length && logPass.length > 0) {
+      //     swal("회원가입이 완료되었습니다.", {
+      //       icon: "success",
+      //     }).then((res) => {
+      //       window.location.replace("/login");
+      //     });
+      //   }
+      // });
     </script>
 
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
