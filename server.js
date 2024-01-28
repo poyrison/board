@@ -210,7 +210,7 @@ app.post("/signup", async (req, res) => {
 
   const nameErrorMessage = "이름을 2 ~ 8자 이내의 한글로 입력해주세요.";
   const idErrorMessage =
-    "아이디 형식은 영문과 숫자로만 구성되어야 합니다. 다른 문자나 특수문자는 사용할 수 없습니다.";
+    "아이디는 영문과 숫자로만 구성되어야하며\n 특수문자나 다른 문자는 사용할 수 없습니다.";
   const pwErrorMessage =
     "비밀번호 형식은 영문 최소 하나의 특수문자를 포함하여 6 ~ 16자 사이여야 합니다.";
   const duplicateIdErrorMessage = "이미 사용중인 아이디입니다.";
