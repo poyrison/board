@@ -22,8 +22,8 @@
     <%- include('nav.ejs') %>
     <div class="container">
       <div class="input-group mb-2">
-        <input class="form-control" id="search_input" />
-        <button class="input-group-append btn btn-success" id="search">
+        <input class="form-control" id="searchInput" />
+        <button class="input-group-append btn btn-success" id="searchBtn">
           <i class="bi bi-search"></i>
         </button>
         <% if(user) { %>
@@ -85,26 +85,26 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      $("#search").click(() => {
-        let searchValue = $("#search_input").val();
+      $("#searchBtn").click(() => {
+        let searchValue = $("#searchInput").val();
         if (searchValue.length == 0) {
           swal("검색어를 입력해주세요", {
             icon: "warning",
           });
         } else {
-          let inputValue = $("#search_input").val();
+          let inputValue = $("#searchInput").val();
           window.location.replace(`/search?value=${inputValue}`);
         }
       });
-      $("#search_input").on("keypress", (e) => {
+      $("#searchInput").on("keypress", (e) => {
         if (e.key === "Enter") {
-          let searchValue = $("#search_input").val();
+          let searchValue = $("#searchInput").val();
           if (searchValue.length == 0) {
             swal("검색어를 입력해주세요", {
               icon: "warning",
             });
           } else {
-            let inputValue = $("#search_input").val();
+            let inputValue = $("#searchInput").val();
             window.location.replace(`/search?value=${inputValue}`);
           }
         }

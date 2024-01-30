@@ -34,11 +34,12 @@
   <body>
     <%- include('nav.ejs') %>
     <div class="container">
+      <!-- 검색창 -->
       <div class="input-group mb-2">
-        <input class="form-control" id="search_input" />
+        <input class="form-control" id="searchInput" />
         <button
           class="input-group-append btn btn-success"
-          id="search"
+          id="searchBtn"
           title="검색"
         >
           <i class="bi bi-search"></i>
@@ -57,12 +58,14 @@
         </a>
         <% } %>
       </div>
+      <!-- 게시물 -->
       <ul class="list-group p-5">
         <% for(let i = 0; i < posts.length; i++){ %>
         <a href="/detail/<%= posts[i]._id %>" id="link">
           <li
-            class="list-group-item list-group-item-action list"
-            data-id="<%= posts[i]._id %>"
+            class="list-group-item list-group-item-action list boardIndex"
+            id="boardIndex"
+            data-class="<%= posts[i]._id %>"
           >
             <div class="date_box">
               <div>
@@ -88,46 +91,71 @@
         <hr />
         <% } %>
       </ul>
-      <!-- 페이지네이션 시작 -->
-      <!-- <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
+      <!-- 페이지네이션 -->
+      <div id="paginationContent"></div>
+      <nav aria-label="Page navigation example">
+        <!-- 페이지네이션 목록 버튼 -->
+        <ul class="pagination justify-content-center paginationBtn">
+          <!-- 맨 처음 페이지로 이동하는 버튼 -->
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
+            <button class="page-link move-first" aria-label="First">
+              <span aria-hidden="true">&lt;&lt;</span>
+            </button>
           </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <!-- 이전 페이지로 이동하는 버튼 -->
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+            <button class="page-link prev" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <!-- 페이지 번호를 표시하는 버튼들 -->
+          <li class="page-item"><button class="page-link">1</button></li>
+          <li class="page-item"><button class="page-link">2</button></li>
+          <li class="page-item"><button class="page-link">3</button></li>
+          <li class="page-item"><button class="page-link">4</button></li>
+          <li class="page-item"><button class="page-link">5</button></li>
+          <!-- 다음 페이지로 이동하는 버튼 -->
+          <li class="page-item">
+            <button class="page-link next" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
-            </a>
+            </button>
+          </li>
+          <!-- 맨 마지막 페이지로 이동하는 버튼 -->
+          <li class="page-item">
+            <button class="page-link move-last" aria-label="Last">
+              <span aria-hidden="true">&gt;&gt;</span>
+            </button>
           </li>
         </ul>
-      </nav> -->
+      </nav>
       <!-- 페이지네이션 끝 -->
     </div>
+    <!-- footer -->
+    <%- include('footer.ejs') %>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      $("#search").click(() => {
-        let searchValue = $("#search_input").val();
+      $("#searchBtn").click(() => {
+        let searchValue = $("#searchInput").val();
         if (searchValue.length == 0) {
-          swal("검색어를 입력해주세요", {
+          swal({
+            title: "검색어를 입력해주세요",
             icon: "warning",
           });
         } else {
-          let inputValue = $("#search_input").val();
+          let inputValue = $("#searchInput").val();
           window.location.replace(`/search?value=${inputValue}`);
         }
       });
-      $("#search_input").on("keypress", (e) => {
+      $("#searchInput").on("keypress", (e) => {
         if (e.key === "Enter") {
-          let searchValue = $("#search_input").val();
+          let searchValue = $("#searchInput").val();
           if (searchValue.length == 0) {
-            swal("검색어를 입력해주세요", {
+            swal({
+              title: "검색어를 입력해주세요",
               icon: "warning",
             });
           } else {
-            let inputValue = $("#search_input").val();
+            let inputValue = $("#searchInput").val();
             window.location.replace(`/search?value=${inputValue}`);
           }
         }
@@ -154,6 +182,206 @@
           }
         });
       });
+    </script>
+    <script>
+      const board = document.getElementsByClassName("boardIndex");
+      // const boardIndex = board.dataset.val;
+      console.log(board);
+
+      // 예시 데이터
+      const data = [];
+      for (let i = 0; i <= board.length - 1; i++) {
+        const post = posts[i];
+        const listItem = document.createElement("li");
+        listItem.className =
+          "list-group-item list-group-item-action list boardIndex";
+        listItem.id = "boardIndex";
+        listItem.setAttribute("data-class", post._id);
+
+        const dateBox = document.createElement("div");
+        dateBox.className = "date_box";
+
+        const noDiv = document.createElement("div");
+        const noParagraph = document.createElement("p");
+        noParagraph.className = "list_no";
+        noParagraph.textContent = `no. ${post._id}`;
+        noDiv.appendChild(noParagraph);
+        dateBox.appendChild(noDiv);
+
+        const dateDiv = document.createElement("div");
+        const dateParagraph = document.createElement("p");
+        dateParagraph.className = "list_date";
+        dateParagraph.textContent = post.date;
+        dateDiv.appendChild(dateParagraph);
+        dateBox.appendChild(dateDiv);
+
+        listItem.appendChild(dateBox);
+
+        const titleBox = document.createElement("div");
+        titleBox.className = "list_title_box";
+
+        const titleHeading = document.createElement("h4");
+        titleHeading.className = "list_title";
+        titleHeading.textContent = post.title;
+        titleBox.appendChild(titleHeading);
+
+        if (post.cmtCount) {
+          const cmtNoHeading = document.createElement("h4");
+          cmtNoHeading.className = "list_cmtNo";
+          const bElement = document.createElement("b");
+          bElement.textContent = `[${post.cmtCount}]`;
+          cmtNoHeading.appendChild(bElement);
+          titleBox.appendChild(cmtNoHeading);
+        }
+
+        listItem.appendChild(titleBox);
+
+        const btnBox = document.createElement("div");
+        btnBox.className = "btnBox";
+
+        const writerParagraph = document.createElement("p");
+        writerParagraph.className = "list_writer";
+        writerParagraph.textContent = `작성자: ${post.writer}`;
+        btnBox.appendChild(writerParagraph);
+
+        listItem.appendChild(btnBox);
+
+        const link = document.createElement("a");
+        link.href = `/detail/${post._id}`;
+        link.id = "link";
+        link.appendChild(listItem);
+
+        const hrElement = document.createElement("hr");
+
+        data.push(link, hrElement);
+      }
+
+      const itemsPerPage = 5; // 페이지당 보여줄 항목 수
+      let currentPage = 1; // 현재 페이지
+
+      function displayItems() {
+        const content = document.getElementById("paginationContent");
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToDisplay = data.slice(startIndex, endIndex);
+
+        content.innerHTML = "";
+        for (const item of itemsToDisplay) {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          content.appendChild(listItem);
+        }
+      }
+
+      function setupPagination() {
+        const pagination = document.querySelector(".pagination");
+        pagination.innerHTML = "";
+
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+        const paginationLength = 5; // 한 번에 표시할 페이지 번호 개수
+        const startPage = Math.max(
+          1,
+          currentPage - Math.floor(paginationLength / 2)
+        );
+        const endPage = Math.min(startPage + paginationLength - 1, totalPages);
+
+        const ul = document.createElement("ul");
+        ul.classList.add("pagination");
+        ul.classList.add("justify-content-center");
+        for (let i = startPage; i <= endPage; i++) {
+          const li = document.createElement("li");
+          li.classList.add("page-item");
+          const link = document.createElement("button");
+          link.classList.add("page-link");
+          link.textContent = i;
+
+          if (i === currentPage) {
+            li.classList.add("active");
+          }
+
+          link.addEventListener("click", () => {
+            currentPage = i;
+            displayItems();
+            setupPagination();
+          });
+
+          li.appendChild(link);
+          ul.appendChild(li);
+        }
+
+        pagination.appendChild(ul);
+
+        // 이전 버튼
+        const prevButton = document.createElement("li");
+        prevButton.classList.add("page-item");
+        const prevLink = document.createElement("button");
+        prevLink.classList.add("page-link");
+        prevLink.setAttribute("aria-label", "Previous");
+        prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>';
+        prevButton.appendChild(prevLink);
+        prevButton.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            displayItems();
+            setupPagination();
+          }
+        });
+        ul.insertBefore(prevButton, ul.firstChild);
+
+        // 다음 버튼
+        const nextButton = document.createElement("li");
+        nextButton.classList.add("page-item");
+        const nextLink = document.createElement("button");
+        nextLink.classList.add("page-link");
+        nextLink.setAttribute("aria-label", "Next");
+        nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>';
+        nextButton.appendChild(nextLink);
+        nextButton.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            displayItems();
+            setupPagination();
+          }
+        });
+        ul.appendChild(nextButton);
+
+        // 맨 앞으로 이동 버튼
+        const moveFirstButton = document.createElement("li");
+        moveFirstButton.classList.add("page-item");
+        const moveFirstLink = document.createElement("button");
+        moveFirstLink.classList.add("page-link");
+        moveFirstLink.setAttribute("aria-label", "First");
+        moveFirstLink.innerHTML = '<span aria-hidden="true">&lt;&lt;</span>';
+        moveFirstButton.appendChild(moveFirstLink);
+        moveFirstButton.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage = 1;
+            displayItems();
+            setupPagination();
+          }
+        });
+        ul.insertBefore(moveFirstButton, ul.firstChild);
+
+        // 맨 뒤로 이동 버튼
+        const moveLastButton = document.createElement("li");
+        moveLastButton.classList.add("page-item");
+        const moveLastLink = document.createElement("button");
+        moveLastLink.classList.add("page-link");
+        moveLastLink.setAttribute("aria-label", "Last");
+        moveLastLink.innerHTML = '<span aria-hidden="true">&gt;&gt;</span>';
+        moveLastButton.appendChild(moveLastLink);
+        moveLastButton.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage = totalPages;
+            displayItems();
+            setupPagination();
+          }
+        });
+        ul.appendChild(moveLastButton);
+      }
+
+      displayItems();
+      setupPagination();
     </script>
     <script
       async

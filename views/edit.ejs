@@ -54,7 +54,8 @@
     <script>
       $(".cancel").click((e) => {
         e.preventDefault()
-        swal("수정을 취소했습니다.", {
+        swal({
+          title: "수정을 취소했습니다.",
           icon: "success",
         }).then((res) => {
           console.log("수정취소 완료");
@@ -62,7 +63,8 @@
         });
       });
       $(".modify").click((e) => {
-        swal("수정을 완료했습니다!", {
+        swal({
+          title: "수정을 완료했습니다!",
           icon: "success",
         }).then((res) => {
           console.log("수정 완료");

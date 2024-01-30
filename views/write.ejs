@@ -33,7 +33,7 @@
       <form method="POST" action="/add" enctype="multipart/form-data">
         <div class="form-group">
           <div style="visibility: hidden">
-            <input id="addDate" name="addDate" style="visibility: hidden"></input>
+            <input id="addDate" name="addDate" style="visibility: hidden" />
           </div>
           <label for="write_title">제목</label>
           <input
@@ -78,7 +78,8 @@
             buttons: true,
             dangerMode: true,
           }).done(
-            swal("게시글을 작성했습니다.", {
+            swal({
+              title: "게시글을 작성했습니다.",
               icon: "success",
             }).then((res) => {
               window.location.href = `/`;
@@ -92,18 +93,19 @@
         const newLineData = data.replace(/\n/g, "<br />");
         console.log(newLineData);
       };
-      // let text = $("textarea").val();
-      // text = text.replace(/(?:\r\n|\r|\n)/g, "<br>");
+
       const date = new Date();
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const day = date.getDate();
-      const hour = date.getHours();
-      const minute = date.getMinutes();
-      const second = date.getSeconds();
-      const addTime = () => `${year}.${month}.${day}`;
 
-      document.getElementById("addDate").value = addTime();
+      const writeMonth = month < 10 ? `0${month}` : `${month}`;
+
+      const writeDay = day < 10 ? `0${day}` : `${day}`;
+
+      const writeTime = () => `${year}.${writeMonth}.${writeDay}`;
+
+      document.getElementById("addDate").value = writeTime();
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

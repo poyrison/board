@@ -233,7 +233,8 @@
                   upload: e.target.dataset.upload,
                 },
               }).done(
-                swal("삭제를 완료했습니다!", {
+                swal({
+                  title: "삭제를 완료했습니다!",
                   icon: "success",
                 }).then((res) => {
                   console.log("삭제 완료");
@@ -250,7 +251,8 @@
                   writer: e.target.dataset.writer,
                 },
               }).done(
-                swal("삭제를 완료했습니다!", {
+                swal({
+                  title: "삭제를 완료했습니다!",
                   icon: "success",
                 }).then((res) => {
                   console.log("삭제 완료");
@@ -320,7 +322,8 @@
                   cmtTime: cmtTime,
                 },
               }).done(
-                swal("댓글을 작성했습니다.", {
+                swal({
+                  title: "댓글을 작성했습니다.",
                   icon: "success",
                 }).then((res) => {
                   window.location.href = `/detail/${e.target.dataset.id}`;
@@ -346,7 +349,8 @@
                 cmtNo: e.target.dataset.cmt_no,
               },
             }).done(
-              swal("삭제를 완료했습니다!", {
+              swal({
+                title: "삭제를 완료했습니다!",
                 icon: "success",
               }).then((res) => {
                 console.log("삭제 완료");
