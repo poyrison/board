@@ -3,6 +3,7 @@
 }
 
 body {
+  position: relative;
   height: 100%;
   margin: 0;
 }
@@ -15,15 +16,16 @@ textarea {
   display: flex;
 }
 
+.hidden {
+  display: none;
+  visibility: "hidden";
+}
+
 .container {
   min-width: 768px;
   height: 100%;
+  min-height: 70vh;
 }
-
-/* .paginationBtn {
-  position: absolute;
-  bottom: 0;
-} */
 
 #footer {
   font-weight: bold;
@@ -48,9 +50,9 @@ textarea {
   margin-top: 30px;
 }
 
-.list-group {
+/* .list-group {
   text-align: center;
-}
+} */
 
 .list-group-item {
   cursor: pointer;
@@ -81,6 +83,7 @@ textarea {
 
 .list_title_box {
   justify-content: center;
+  align-items: baseline;
   display: flex;
   padding: 0 25%;
 }
@@ -90,6 +93,10 @@ textarea {
   overflow: hidden; /* 텍스트가 너비를 초과할 경우 숨김 처리 */
   text-overflow: ellipsis; /* 초과된 텍스트는 생략 부호(...)로 표시 */
   /* text-transform: capitalize; 대문자*/
+}
+
+.list_cmtNo {
+  font-size: 24px;
 }
 
 .comment_delete {
@@ -126,6 +133,7 @@ textarea {
 }
 
 .date_box {
+  height: 2rem;
   display: flex;
   justify-content: space-between;
 }
@@ -232,4 +240,9 @@ textarea {
 .CommentCount_icon h5 {
   margin: 0;
   padding-left: 0.5rem;
+}
+
+/* New pagination */
+.post-container p {
+  margin-bottom: 0;
 }

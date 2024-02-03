@@ -19,7 +19,13 @@
     <div class="container">
       <form action="/edit?_method=PUT" method="POST">
         <div class="form-group">
-          <input name="date" style="display: none" value="<%= posts.date %>"></input>
+          <input
+            name="isModified"
+            class="isModified hidden"
+            data-class="isModified"
+            value="<%= isModified.isModified %>"
+          />
+          <input name="date" style="display: none" value="<%= posts.date %>" />
           <label>제목</label>
           <input
             type="text"
@@ -45,15 +51,19 @@
           >
         </div>
         <div class="flex modify_btn_area">
-          <button type="submit" class="btn btn-danger cancel modify_btn">취소</button>
-          <button type="submit" class="btn btn-danger modify modify_btn">수정</button>
+          <button type="submit" class="btn btn-danger cancel modify_btn">
+            취소
+          </button>
+          <button type="submit" class="btn btn-danger modify modify_btn">
+            수정
+          </button>
         </div>
       </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(".cancel").click((e) => {
-        e.preventDefault()
+        e.preventDefault();
         swal({
           title: "수정을 취소했습니다.",
           icon: "success",

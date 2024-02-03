@@ -87,6 +87,7 @@ app.get("/", (req, res) => {
             comments: result2,
           });
         });
+      console.log(result);
     });
 });
 
@@ -154,7 +155,11 @@ app.get("/edit/:id", loginCheck, (req, res) => {
   db.collection("post").findOne(
     { _id: parseInt(req.params.id) }, // /edit/:id 부분의 값을 가져온다.
     (err, result) => {
-      res.render("edit.ejs", { posts: result, user: req.user });
+      res.render("edit.ejs", {
+        posts: result,
+        user: req.user,
+        isModified: result,
+      });
     }
   );
 });
@@ -166,8 +171,11 @@ app.put("/edit", (req, res) => {
       $set: {
         title: req.body.name,
         content: req.body.content,
-        // date: todayDate + "(수정됨)",
-        // date: `${req.body.date}`,
+        // date: req.body.date.includes("수정됨")
+        //   ? `${req.body.date}`
+        //   : `${req.body.date}(수정됨)`,
+        date: req.body.date,
+        isModified: req.body.isModified === false && true,
       },
     },
     (err, result) => {
@@ -180,28 +188,6 @@ app.put("/edit", (req, res) => {
 app.get("/signup", (req, res) => {
   res.render("signup.ejs", { user: req.user });
 });
-
-// app.post("/signup", (req, res) => {
-//   db.collection("login").findOne({ id: req.body.id }, (err, result) => {
-//     if (result == null) {
-//       bcrypt.hash(req.body.pw, saltRounds, (err, hash) => {
-//         db.collection("login").insertOne(
-//           { id: req.body.id, pw: hash, name: req.body.user_name },
-//           () => {
-//             res.send(
-//               "<script>alert('회원가입을 완료했습니다.');location.href='/login'</script>"
-//             );
-//           }
-//         );
-//       });
-//     } else {
-//       res.send(
-//         "<script>alert('이미 사용중인 아이디입니다.');history.back();</script>"
-//       );
-//       res.status(400).send({ message: "이미 사용중인 아이디입니다." });
-//     }
-//   });
-// });s
 
 app.post("/signup", async (req, res) => {
   const nameRegex = /^[가-힣]{2,8}$/; // 이름 정규식
@@ -334,6 +320,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         title: req.body.title,
         content: req.body.content,
         cmtCount: 0,
+        isModified: false,
         upload:
           path.basename(fileName, path.extname(fileName)) +
           path.extname(fileName),
@@ -361,6 +348,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         title: req.body.title,
         content: req.body.content,
         cmtCount: 0,
+        isModified: false,
       };
 
       db.collection("post").insertOne(saveItem, () => {

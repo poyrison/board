@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+}
+
+.prev-button,
+.next-button {
+  margin: 0 15px;
+}
+.number-button {
+  margin: 0 5px;
+}
+
+.prev-button:hover,
+.next-button:hover,
+.number-button:hover {
+  font-weight: 800;
+  color: red;
+  cursor: pointer;
+}
+
+.pagination-container {
+  user-select: none;
+}
+
+.selected {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: dodgerblue;
+}
