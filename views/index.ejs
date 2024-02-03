@@ -80,7 +80,7 @@
             </div>
             <input
               class="isModified"
-              data-class="posts[i].isModified"
+              data-class="<%= posts[i].isModified %>"
               value="<%= posts[i].isModified %>"
             />
             <div class="list_title_box">
@@ -226,7 +226,7 @@
           writer: `${postWriterData}`,
           isModified: `${postModifiedData}`,
         });
-        console.log(`${postCmtData}`);
+        console.log(`${postModifiedData}`);
       }
 
       const COUNT_PER_PAGE = 6;
