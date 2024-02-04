@@ -18,11 +18,16 @@
     <%- include('nav.ejs') %>
     <div class="container">
       <form action="/edit?_method=PUT" method="POST">
+        <input
+          id="modifiedDate"
+          name="modifiedDate"
+          style="visibility: hidden"
+        />
         <div class="form-group">
           <input
             name="isModified"
             class="isModified hidden"
-            data-class="isModified"
+            data-class="<%= isModified.isModified %>"
             value="<%= isModified.isModified %>"
           />
           <input name="date" style="display: none" value="<%= posts.date %>" />
@@ -81,6 +86,19 @@
           location.replace("/detail/<%= posts._id %>");
         });
       });
+
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+
+      const modifiedMonth = month < 10 ? `0${month}` : `${month}`;
+
+      const modifiedDay = day < 10 ? `0${day}` : `${day}`;
+
+      const modifiedTime = () => `${year}.${modifiedMonth}.${modifiedDay}`;
+
+      document.getElementById("modifiedDate").value = modifiedTime();
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

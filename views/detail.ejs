@@ -41,7 +41,15 @@
             <span class="detail_writer text-muted"
               >작성자: <%= posts.writer %></span
             >
+            <% if(posts.isModified){ %>
+
+            <span class="detail_date mb-2 text-muted"
+              ><%= posts.date %>(수정됨)</span
+            >
+            <% }else{%>
             <span class="detail_date mb-2 text-muted"><%= posts.date %></span>
+
+            <% } %>
           </div>
           <hr />
           <div class="content_box">

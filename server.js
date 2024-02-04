@@ -87,7 +87,7 @@ app.get("/", (req, res) => {
             comments: result2,
           });
         });
-      console.log(result);
+      //console.log(result);
     });
 });
 
@@ -171,11 +171,8 @@ app.put("/edit", (req, res) => {
       $set: {
         title: req.body.name,
         content: req.body.content,
-        // date: req.body.date.includes("수정됨")
-        //   ? `${req.body.date}`
-        //   : `${req.body.date}(수정됨)`,
-        date: req.body.date,
-        isModified: req.body.isModified === false && true,
+        date: req.body.modifiedDate,
+        isModified: true,
       },
     },
     (err, result) => {
@@ -461,7 +458,7 @@ app.get("/search", (req, res) => {
   db.collection("post")
     .aggregate(searchCondition)
     .toArray((err, result) => {
-      console.log(result);
+      // console.log(result);
       res.render("search.ejs", { posts: result, user: req.user });
     });
 });

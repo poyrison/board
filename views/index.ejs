@@ -226,7 +226,7 @@
           writer: `${postWriterData}`,
           isModified: `${postModifiedData}`,
         });
-        console.log(`${postModifiedData}`);
+        // console.log(`${data[i].isModified}`);
       }
 
       const COUNT_PER_PAGE = 6;
@@ -320,10 +320,11 @@
             postNumber.textContent = `no. ${data[i].postNumber}`;
             postTitle.textContent = data[i].title;
             postWriter.textContent = `작성자: ${data[i].writer}`;
-            postDate.textContent = `${data[i].date}`;
-            // isModifiedData === false
-            //   ? `${data[i].date}(수정됨)`
-            //   : `${data[i].date}`;
+            postDate.textContent = `${
+              data[i].isModified === "true"
+                ? data[i].date + "(수정됨)"
+                : data[i].date
+            }`;
             postCmt.textContent = `${
               data[i].cmt > 0 ? `[${data[i].cmt}]` : ""
             }`;
