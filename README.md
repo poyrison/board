@@ -31,6 +31,8 @@
 
 - 댓글 작성/삭제
 
+- 게시물 pagination
+
 - MongoDB의 Search Index를 사용해 게시물 제목 검색
 
 - 관리자가 사용자의 게시물 및 댓글을 관리 -->

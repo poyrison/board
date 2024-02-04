@@ -1,0 +1,192 @@
+<script>
+  const postNumberElements = document.querySelectorAll(".post-number");
+  const postTitleElements = document.querySelectorAll(".post-title");
+  const postCmtElements = document.querySelectorAll(".post-cmtNo");
+  const postDateElements = document.querySelectorAll(".post-date");
+  const postWriterElements = document.querySelectorAll(".post-writer");
+  const postModifiedElements = document.querySelectorAll(".isModified");
+
+  const postLength = document.querySelector("#post-length").value;
+  if (postLength <= 0) {
+    alert("검색어에 맞는 게시물이 없습니다.");
+    window.location.href = "/";
+  }
+
+  const data = [];
+
+  for (let i = 0; i < postLength; i++) {
+    const postNumberData = postNumberElements[i].getAttribute("data-class");
+    const postTitleData = postTitleElements[i].getAttribute("data-class");
+    const postCmtData = postCmtElements[i].getAttribute("data-class");
+
+    const postDateData = postDateElements[i].getAttribute("data-class");
+    const postWriterData = postWriterElements[i].getAttribute("data-class");
+    const postModifiedData = postModifiedElements[i].getAttribute("data-class");
+
+    data.push({
+      postNumber: `${postNumberData}`,
+      title: `${postTitleData}`,
+      cmt: `${postCmtData}`,
+      date: `${postDateData}`,
+      writer: `${postWriterData}`,
+      isModified: `${postModifiedData}`,
+    });
+    // console.log(`${data[i].isModified}`);
+  }
+
+  const COUNT_PER_PAGE = 10;
+  let numberButtonWrapper = document.querySelector(".number-button-wrapper");
+  const ul = document.querySelector("#post-ul"); // 게시물을 담을 unordered list
+  ul.className = "list-group p-5 post-group";
+
+  const prevButton = document.querySelector(".prev-button");
+  const nextButton = document.querySelector(".next-button");
+  let pageNumberButtons;
+
+  let currentPage = 1;
+
+  const getTotalPageCount = () => {
+    return Math.ceil(data.length / COUNT_PER_PAGE);
+  };
+
+  const setPageButtons = () => {
+    if (numberButtonWrapper !== null) {
+      numberButtonWrapper.innerHTML = "";
+
+      Array.from({ length: getTotalPageCount() }, (_, i) => i + 1).forEach(
+        (page) => {
+          numberButtonWrapper.innerHTML += `<span class="number-button">${page}</span>`;
+        }
+      );
+
+      numberButtonWrapper.firstChild.classList.add("selected");
+      pageNumberButtons = document.querySelectorAll(".number-button");
+    }
+  };
+
+  const renderPostsByPage = (pageNumber) => {
+    if (ul !== null) {
+      ul.textContent = "";
+
+      for (
+        let i = COUNT_PER_PAGE * (pageNumber - 1);
+        i < COUNT_PER_PAGE * pageNumber && i < data.length;
+        i++
+      ) {
+        const li = document.createElement("li");
+        li.className = "list-group-item list-group-item-action";
+
+        const postContainer = document.createElement("div");
+
+        const input = document.createElement("input");
+        input.className = "isModified";
+
+        postContainer.className = "post-container";
+
+        const postNumber = document.createElement("p");
+        postNumber.className = "list_no post-number";
+
+        const postLink = document.createElement("a");
+        postLink.className = "link";
+        postLink.id = "link";
+        postLink.href = `/detail/${data[i].postNumber}`;
+
+        const div1 = document.createElement("div");
+        const div2 = document.createElement("div");
+
+        // titleBox
+        const postTitleBox = document.createElement("div");
+        postTitleBox.className = "list_title_box";
+
+        // title
+        const postTitle = document.createElement("h4");
+        postTitle.className = "list_title post-title";
+
+        // cmtCount
+        const postCmt = document.createElement("b");
+        postCmt.className = "list_cmtNo post-cmtNo";
+
+        // writer
+        const postWriter = document.createElement("p");
+        postWriter.className = "list_writer post-writer";
+
+        // date
+        const postDateBox = document.createElement("div");
+        postDateBox.className = "date_box";
+
+        const postBtnBox = document.createElement("div");
+        postBtnBox.className = "btnBox";
+
+        const postDate = document.createElement("p");
+        postDate.className = "list_date post-date";
+
+        postNumber.textContent = `no. ${data[i].postNumber}`;
+        postTitle.textContent = data[i].title;
+        postWriter.textContent = `작성자: ${data[i].writer}`;
+        postDate.textContent = `${
+          data[i].isModified === "true"
+            ? data[i].date + "(수정됨)"
+            : data[i].date
+        }`;
+        postCmt.textContent = `${data[i].cmt > 0 ? `[${data[i].cmt}]` : ""}`;
+
+        div1.append(postNumber);
+        div2.append(postDate);
+        postTitleBox.append(postTitle, postCmt);
+        postDateBox.append(div1, div2);
+        postBtnBox.append(postWriter);
+
+        postContainer.append(postDateBox, postTitleBox, postLink, postBtnBox);
+        li.append(postContainer);
+        ul.append(li);
+
+        li.addEventListener("click", function () {
+          window.location.href = postLink.href;
+        });
+      }
+    }
+  };
+
+  const moveSelectedPageHighlight = () => {
+    if (pageNumberButtons !== null) {
+      pageNumberButtons.forEach((numberButton) => {
+        numberButton.classList.remove("selected");
+      });
+
+      pageNumberButtons[currentPage - 1].classList.add("selected");
+    }
+  };
+
+  setPageButtons();
+  renderPostsByPage(currentPage);
+
+  if (pageNumberButtons !== null) {
+    pageNumberButtons.forEach((numberButton) => {
+      numberButton.addEventListener("click", (e) => {
+        currentPage = +e.target.innerHTML;
+        renderPostsByPage(currentPage);
+        moveSelectedPageHighlight();
+      });
+    });
+  }
+
+  if (prevButton !== null) {
+    prevButton.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        renderPostsByPage(currentPage);
+        moveSelectedPageHighlight();
+      }
+    });
+  }
+
+  if (nextButton !== null) {
+    nextButton.addEventListener("click", () => {
+      if (currentPage < getTotalPageCount()) {
+        currentPage += 1;
+        renderPostsByPage(currentPage);
+        moveSelectedPageHighlight();
+      }
+    });
+  }
+</script>

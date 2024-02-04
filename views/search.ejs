@@ -13,6 +13,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="/public/main.css" />
+    <link rel="stylesheet" href="/public/pagination.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
@@ -21,57 +22,103 @@
   <body>
     <%- include('nav.ejs') %>
     <div class="container">
+      <!-- 검색창 -->
       <div class="input-group mb-2">
         <input class="form-control" id="searchInput" />
-        <button class="input-group-append btn btn-success" id="searchBtn">
+        <button
+          class="input-group-append btn btn-success"
+          id="searchBtn"
+          title="검색"
+        >
           <i class="bi bi-search"></i>
         </button>
         <% if(user) { %>
-        <a href="/write">
+        <a href="/write" title="글쓰기">
           <button class="input-group-append btn btn-primary">
             <i class="bi bi-pen"></i>
           </button>
         </a>
         <% } else { %>
-        <a href="/write" class="loginCheck">
+        <a href="/write" class="loginCheck" title="글쓰기">
           <button class="input-group-append btn btn-primary">
             <i class="bi bi-pen"></i>
           </button>
         </a>
         <% } %>
       </div>
-    </div>
-    <div class="container">
-      <ul class="list-group p-5">
+      <!-- 게시물 데이터-->
+      <ul class="list-group p-5 post-group hidden" id="post-group">
+        <input value="<%= posts.length %>" id="post-length" />
         <% for(let i = 0; i < posts.length; i++){ %>
-        <a href="/detail/<%= posts[i]._id %>" id="link">
+        <a href="/detail/<%= posts[i]._id %>" id="link" class="link">
           <li
-            class="list-group-item list-group-item-action list"
-            data-id="<%= posts[i]._id %>"
+            class="list-group-item list-group-item-action"
+            data-class="<%= posts[i]._id %>"
           >
-            <div class="date_box">
-              <p class="list_no">no. <%= posts[i]._id %></p>
-              <div style="flex: 1"></div>
-              <p class="list_date"><%= posts[i].date %></p>
+            <div>
+              <p class="list_no post-number" data-class="<%= posts[i]._id %>">
+                no. <%= posts[i]._id %>
+              </p>
             </div>
+            <div>
+              <p class="list_date post-date" data-class="<%= posts[i].date %>">
+                <%= posts[i].date %>
+              </p>
+            </div>
+            <input
+              class="isModified"
+              data-class="<%= posts[i].isModified %>"
+              value="<%= posts[i].isModified %>"
+            />
             <div class="list_title_box">
+              <b
+                class="list_cmtNo post-cmtNo"
+                data-class="<%= posts[i].cmtCount %>"
+                >[<%= posts[i].cmtCount %>]</b
+              >
               <% if(posts[i].cmtCount) {%>
-              <h4 class="list_title"><%= posts[i].title %></h4>
-              <h4 class="list_cmtNo"><b>[<%= posts[i].cmtCount %>]</b></h4>
+              <h4
+                class="list_title post-title"
+                data-class="<%= posts[i].title %>"
+              >
+                <%= posts[i].title %>
+              </h4>
+              <b>[<%= posts[i].cmtCount %>]</b>
               <%}else{%>
-              <h4 class="list_title"><%= posts[i].title %></h4>
+              <h4
+                class="list_title post-title"
+                data-class="<%= posts[i].title %>"
+              >
+                <%= posts[i].title %>
+              </h4>
               <%}%>
             </div>
             <div class="btnBox">
-              <p class="list_writer">작성자: <%= posts[i].writer %></p>
-              <div style="flex: 1"></div>
+              <p
+                class="list_writer post-writer"
+                data-class="<%= posts[i].writer %>"
+              >
+                작성자: <%= posts[i].writer %>
+              </p>
             </div>
           </li>
         </a>
         <hr />
         <% } %>
       </ul>
+      <!-- 게시물 -->
+      <ul id="post-ul"></ul>
+      <!-- 페이지네이션 -->
+      <div class="pagination-container">
+        <div class="prev-button">&lt;</div>
+        <div class="number-button-wrapper">
+          <span class="number-button">1</span>
+        </div>
+        <div class="next-button">&gt;</div>
+      </div>
+      <!-- 페이지네이션 끝 -->
     </div>
+    <%- include('footer.ejs') %> <%- include('pagination.ejs') %>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
