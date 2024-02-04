@@ -47,7 +47,7 @@
         <% } %>
       </div>
       <!-- 게시물 데이터-->
-      <ul class="list-group p-5 post-group hidden" id="post-group">
+      <ul class="list-group p-5 post-group blind" id="post-group">
         <input value="<%= posts.length %>" id="post-length" />
         <% for(let i = 0; i < posts.length; i++){ %>
         <a href="/detail/<%= posts[i]._id %>" id="link" class="link">

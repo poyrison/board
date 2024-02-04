@@ -18,15 +18,11 @@
     <%- include('nav.ejs') %>
     <div class="container">
       <form action="/edit?_method=PUT" method="POST">
-        <input
-          id="modifiedDate"
-          name="modifiedDate"
-          style="visibility: hidden"
-        />
+        <input id="modifiedDate" name="modifiedDate" class="blind" />
         <div class="form-group">
           <input
             name="isModified"
-            class="isModified hidden"
+            class="isModified blind"
             data-class="<%= isModified.isModified %>"
             value="<%= isModified.isModified %>"
           />

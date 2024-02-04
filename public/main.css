@@ -16,7 +16,7 @@ textarea {
   display: flex;
 }
 
-.hidden {
+.blind {
   display: none;
   visibility: "hidden";
 }
@@ -30,12 +30,26 @@ textarea {
 #footer {
   font-weight: bold;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100vw;
   height: 150px;
-  background-color: #ccc;
   margin-top: 100px;
+  background-color: #f5f5f5;
+}
+
+#footer p {
+  margin: 0;
+}
+
+#footer svg {
+  height: 70px;
+  transition: transform 0.3s;
+}
+
+#footer svg:hover {
+  transform: scale(0.85);
 }
 
 #detail_container {
@@ -89,6 +103,7 @@ textarea {
 }
 
 .list_title {
+  margin: 0;
   white-space: nowrap; /* 공백을 무시하고 한 줄로 텍스트를 표시 */
   overflow: hidden; /* 텍스트가 너비를 초과할 경우 숨김 처리 */
   text-overflow: ellipsis; /* 초과된 텍스트는 생략 부호(...)로 표시 */
