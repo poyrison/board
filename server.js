@@ -32,21 +32,44 @@ let db;
 // 날짜
 const uploadTime = moment().format("YYYYMMDDHHmmss");
 
-let multer = require("multer");
+// let multer = require("multer");
 
-let storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // cb = callback
-    cb(null, "./public/image"); // 저장할 파일을 보낼 경로
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname); // 확장자명(.png, .jpg, .jpeg등)
-    cb(null, path.basename(file.originalname, ext) + uploadTime + ext);
-    // cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
+const { S3Client } = require("@aws-sdk/client-s3");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const s3 = new S3Client({
+  region: "ap-northeast-2",
+  credentials: {
+    accessKeyId: process.env.S3_KEY,
+    secretAccessKey: process.env.S3_SECRET,
   },
 });
 
-let upload = multer({ storage: storage });
+// let storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     // cb = callback
+//     cb(null, "./public/image"); // 저장할 파일을 보낼 경로
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = path.extname(file.originalname); // 확장자명(.png, .jpg, .jpeg등)
+//     cb(null, path.basename(file.originalname, ext) + uploadTime + ext);
+//     // cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
+//   },
+// });
+
+// let upload = multer({ storage: storage });
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.S3_REGION,
+    key: function (req, file, cb) {
+      const ext = path.extname(file.originalname); // 확장자명(.png, .jpg, .jpeg등)
+      cb(null, path.basename(file.originalname, ext) + uploadTime + ext);
+      // cb(null, file.originalname); // image폴더에 저장할 파일명을 설정 여기선 기본파일명으로 설정
+      // cb(null, Date.now().toString()); //업로드시 파일명 변경가능
+    },
+  }),
+});
 
 MongoClient.connect(
   process.env.DB_URL,
@@ -303,11 +326,11 @@ passport.use(
 );
 
 // =======  add  =======
-app.post("/add", upload.single("profile"), (req, res) => {
+app.post("/add", upload.single("image"), (req, res) => {
   if (req.file) {
     db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
       let totalPost = result.totalPost;
-      const fileName = req.file.filename;
+      const fileName = req.file.originalname;
 
       let saveItem = {
         _id: totalPost + 1,
@@ -318,9 +341,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
         content: req.body.content,
         cmtCount: 0,
         isModified: false,
-        upload:
-          path.basename(fileName, path.extname(fileName)) +
-          path.extname(fileName),
+        upload: req.file.key,
       };
 
       db.collection("post").insertOne(saveItem, () => {
@@ -360,7 +381,7 @@ app.post("/add", upload.single("profile"), (req, res) => {
     });
   }
 });
-// 파일을 여러개 업로드 하고싶으면 upload.array("profile", 5 //최대 업로드 갯수 설정)
+// 파일을 여러개 업로드 하고싶으면 upload.array("image", 5 //최대 업로드 갯수 설정)
 
 app.get("/image/:imageName", (req, res) => {
   res.sendFile(__dirname + "public/image/" + req.params.imageName);
@@ -370,32 +391,32 @@ app.get("/image/:imageName", (req, res) => {
 app.delete("/delete", (req, res) => {
   req.body._id = parseInt(req.body._id);
 
-  let deleteItem = { writerId: req.body, user: req.user.id };
   if (req.body.writerId == req.user.id || req.user.id == "manager") {
     if (req.body.upload) {
+      const params = {
+        Bucket: process.env.S3_REGION,
+        Key: req.body.upload,
+      };
+
+      try {
+        s3.deleteObject(params).promise();
+        console.log(`Image ${imageKey} deleted from S3.`);
+      } catch (error) {
+        console.error(`Error deleting image from S3: ${error}`);
+      }
       db.collection("post").deleteOne(req.body, (err, result) => {
         db.collection("comment").deleteMany(
           { parentAddress: req.body._id },
           (err, result) => {
-            console.log(`${req.body._id}번 게시물 삭제`);
             res.status(200).send({ message: "성공했습니다." });
           }
         );
-      });
-      fs.unlink(`./public/image/${req.body.upload}`, (err) => {
-        try {
-          if (err) throw new Error();
-          console.log(`${req.body.upload} 삭제`);
-        } catch (e) {
-          console.log(e.message);
-        }
       });
     } else {
       db.collection("post").deleteOne(req.body, (err, result) => {
         db.collection("comment").deleteMany(
           { parentAddress: req.body._id },
           (err, result) => {
-            console.log(`${req.body._id}번 게시물 삭제`);
             res.status(200).send({ message: "성공했습니다." });
           }
         );

@@ -1,7 +1,6 @@
 * {
   box-sizing: border-box;
 }
-
 body {
   position: relative;
   height: 100%;
@@ -35,7 +34,7 @@ textarea {
   justify-content: center;
   width: 100vw;
   height: 150px;
-  margin-top: 100px;
+  margin-top: 75px;
   background-color: #f5f5f5;
 }
 
@@ -111,7 +110,12 @@ textarea {
 }
 
 .list_cmtNo {
-  font-size: 24px;
+  color: #126fc5;
+  font-size: 22px;
+}
+
+.list_img-icon {
+  height: 16px;
 }
 
 .comment_delete {
@@ -239,7 +243,7 @@ textarea {
   /* 개행 처리 */
 }
 #card-content {
-  min-height: 300px;
+  min-height: 50px;
 }
 
 .CommentCount_container {
