@@ -75,9 +75,7 @@
             <%}else {%>
             <img
               src="https://board-image-server.s3.ap-northeast-2.amazonaws.com/<%= posts.upload %>"
-              alt="<%= posts.upload %>"
               style="max-width: 800px; max-height: 800px"
-              title="<%= posts.upload %>"
             />
             <%}%>
             <!-- onclick="window.open(this.src)"
@@ -172,8 +170,8 @@
           </ul>
         </div>
         <!-- 댓글 끝 -->
+        <!-- 댓글 작성란 시작 -->
         <div>
-          <!-- 댓글 작성란 시작 -->
           <% if(user){ %>
           <form class="cmt-form" method="POST" action="/comment">
             <textarea
@@ -215,8 +213,8 @@
             </button>
           </form>
           <% }%>
-          <!-- 댓글 작성란 끝 -->
         </div>
+        <!-- 댓글 작성란 끝 -->
       </div>
     </div>
 

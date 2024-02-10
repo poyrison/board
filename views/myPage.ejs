@@ -17,8 +17,10 @@
   <body>
     <%- include('nav.ejs') %>
     <div class="container">
-      <p><%= user.name %>님의 마이페이지입니다.</p>
-      <button class="btn btn-danger" id="logoutInMyPage">로그아웃</button>
+      <div class="myPage-wrapper">
+        <p><%= user.name %>님의 마이페이지입니다.</p>
+        <button class="btn btn-danger" id="logoutInMyPage">로그아웃</button>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

@@ -34,8 +34,8 @@
       isModified: `${postModifiedData}`,
       upload: `${postUploadData}`,
     });
-    // console.log(`${data[i].isModified}`);
   }
+
   console.log(data);
 
   const COUNT_PER_PAGE = 10;
@@ -125,7 +125,11 @@
         postDate.className = "list_date post-date";
 
         const uploadImg = document.createElement("img");
-        uploadImg.src = "public/icon/gallery.png";
+        const word = data[i].upload.split(".");
+        uploadImg.src =
+          word[1] == "mp4"
+            ? "public/icon/video.png"
+            : "public/icon/gallery.png";
         uploadImg.className = "list_img-icon";
 
         postNumber.textContent = `no. ${data[i].postNumber}`;
@@ -140,7 +144,7 @@
 
         div1.append(postNumber);
         div2.append(postDate);
-        postTitleBox.append(postTitle, postCmt, data[i].upload && uploadImg);
+        postTitleBox.append(postTitle, data[i].upload && uploadImg, postCmt);
         postDateBox.append(div1, div2);
         postBtnBox.append(postWriter);
 

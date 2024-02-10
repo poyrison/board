@@ -98,11 +98,10 @@ textarea {
   justify-content: center;
   align-items: baseline;
   display: flex;
-  padding: 0 25%;
 }
 
 .list_title {
-  margin: 0;
+  margin-right: 3px;
   white-space: nowrap; /* 공백을 무시하고 한 줄로 텍스트를 표시 */
   overflow: hidden; /* 텍스트가 너비를 초과할 경우 숨김 처리 */
   text-overflow: ellipsis; /* 초과된 텍스트는 생략 부호(...)로 표시 */
@@ -111,7 +110,8 @@ textarea {
 
 .list_cmtNo {
   color: #126fc5;
-  font-size: 22px;
+  font-size: 24px;
+  margin-left: 2px;
 }
 
 .list_img-icon {
