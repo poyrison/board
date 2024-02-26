@@ -3,7 +3,7 @@
     class="navbar navbar-expand-lg navbar-light bg-light"
     style="position: fixed; width: 100%; z-index: 9999; padding: 8px 80px"
   >
-    <a class="navbar-brand" href="/">게시판</a>
+    <a class="navbar-brand" id="navbar-brand" href="/">C.Hub</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -18,7 +18,31 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto"></ul>
-      <div style="flex: 1"></div>
+      <!-- <div style="flex: 1"></div> -->
+      <!-- 검색창 -->
+      <div class="input-group mb-2">
+        <input class="form-control" id="searchInput" />
+        <button
+          class="input-group-append btn btn-success"
+          id="searchBtn"
+          title="검색"
+        >
+          <i class="bi bi-search"></i>
+        </button>
+        <% if(user) { %>
+        <a href="/write" title="글쓰기">
+          <button class="input-group-append btn btn-primary">
+            <i class="bi bi-pen"></i>
+          </button>
+        </a>
+        <% } else { %>
+        <a href="/write" class="loginCheck" title="글쓰기">
+          <button class="input-group-append btn btn-primary">
+            <i class="bi bi-pen"></i>
+          </button>
+        </a>
+        <% } %>
+      </div>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item dropdown">
           <a
@@ -67,7 +91,8 @@
           url: "/logout",
         })
           .done((result) => {
-            swal("로그아웃 완료", {
+            swal({
+              title: "로그아웃 완료",
               icon: "success",
             }).then((res) => {
               window.location.href = "/";

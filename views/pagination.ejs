@@ -35,8 +35,7 @@
       upload: `${postUploadData}`,
     });
   }
-
-  console.log(data);
+  // console.log(data);
 
   const COUNT_PER_PAGE = 10;
   let numberButtonWrapper = document.querySelector(".number-button-wrapper");
@@ -125,9 +124,9 @@
         postDate.className = "list_date post-date";
 
         const uploadImg = document.createElement("img");
-        const word = data[i].upload.split(".");
+        const imgType = data[i].upload.split(".");
         uploadImg.src =
-          word[1] == "mp4"
+          imgType[1] == "mp4"
             ? "public/icon/video.png"
             : "public/icon/gallery.png";
         uploadImg.className = "list_img-icon";
@@ -136,9 +135,7 @@
         postTitle.textContent = data[i].title;
         postWriter.textContent = `작성자: ${data[i].writer}`;
         postDate.textContent = `${
-          data[i].isModified === "true"
-            ? data[i].date + "(수정됨)"
-            : data[i].date
+          data[i].isModified === "true" ? data[i].date : data[i].date
         }`;
         postCmt.textContent = `${data[i].cmt > 0 ? ` [${data[i].cmt}]` : ""}`;
 

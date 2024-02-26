@@ -194,7 +194,7 @@ app.put("/edit", (req, res) => {
       $set: {
         title: req.body.name,
         content: req.body.content,
-        date: req.body.modifiedDate,
+        // date: req.body.modifiedDate,
         isModified: true,
       },
     },

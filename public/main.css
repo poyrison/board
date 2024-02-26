@@ -178,10 +178,9 @@ textarea {
 
 .input-group {
   justify-content: center;
-  padding: 0 25%;
-  margin: 0;
-  top: 20px;
-  z-index: 1000;
+  padding: 0 15%;
+  margin: 0 !important;
+  top: 3px;
 }
 .input-group-append {
   margin-top: 0;
@@ -264,4 +263,8 @@ textarea {
 /* New pagination */
 .post-container p {
   margin-bottom: 0;
+}
+
+/* myPage */
+.myPage-wrapper {
 }
