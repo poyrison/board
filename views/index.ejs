@@ -49,35 +49,10 @@
       sizes="16x16"
       href="/public/icon/favicon-16x16.png"
     />
-    <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body>
     <%- include('nav.ejs') %>
     <div class="container">
-      <!-- 검색창 -->
-      <!-- <div class="input-group mb-2">
-        <input class="form-control" id="searchInput" />
-        <button
-          class="input-group-append btn btn-success"
-          id="searchBtn"
-          title="검색"
-        >
-          <i class="bi bi-search"></i>
-        </button>
-        <% if(user) { %>
-        <a href="/write" title="글쓰기">
-          <button class="input-group-append btn btn-primary">
-            <i class="bi bi-pen"></i>
-          </button>
-        </a>
-        <% } else { %>
-        <a href="/write" class="loginCheck" title="글쓰기">
-          <button class="input-group-append btn btn-primary">
-            <i class="bi bi-pen"></i>
-          </button>
-        </a>
-        <% } %>
-      </div> -->
       <!-- 게시물 데이터-->
       <ul class="list-group p-5 post-group blind" id="post-group">
         <input value="<%= posts.length %>" id="post-length" />
