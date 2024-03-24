@@ -1,6 +1,6 @@
 # 게시판 프로젝트
 
-⚙ 현재 서비스 중인 URL: <https://todo-app-387113.du.r.appspot.com/>
+⚙ 현재 서비스 중인 URL: <http://community-hub.ap-northeast-2.elasticbeanstalk.com/>
 
 📋 프로젝트 기간: 2023.05.08 ~ 진행중
 
