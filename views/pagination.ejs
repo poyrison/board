@@ -6,11 +6,16 @@
   const postWriterElements = document.querySelectorAll(".post-writer");
   const postModifiedElements = document.querySelectorAll(".isModified");
   const postUploadElements = document.querySelectorAll(".post-upload");
+  const postCategoryElements = document.querySelectorAll(".category");
 
+  // 게시물이 단 하나도 존재하지 않을 때에 아래의 경고문이 나타나는 이슈
   const postLength = document.querySelector("#post-length").value;
   if (postLength <= 0) {
-    alert("검색어에 맞는 게시물이 없습니다.");
-    window.location.href = "/";
+    // swal({
+    //   title: "검색어에 맞는 게시물이 없습니다.",
+    //   icon: "warning",
+    // });
+    window.location.href = "/noPost";
   }
 
   const data = [];
@@ -24,6 +29,7 @@
     const postWriterData = postWriterElements[i].getAttribute("data-class");
     const postModifiedData = postModifiedElements[i].getAttribute("data-class");
     const postUploadData = postUploadElements[i].getAttribute("data-class");
+    const postCategoryData = postCategoryElements[i].getAttribute("data-class");
 
     data.push({
       postNumber: `${postNumberData}`,
@@ -33,13 +39,14 @@
       writer: `${postWriterData}`,
       isModified: `${postModifiedData}`,
       upload: `${postUploadData}`,
+      category: `${postCategoryData}`,
     });
   }
   // console.log(data);
 
   const COUNT_PER_PAGE = 10;
   let numberButtonWrapper = document.querySelector(".number-button-wrapper");
-  const ul = document.querySelector("#post-ul"); // 게시물을 담을 unordered list
+  const ul = document.querySelector("#post-ul"); // 게시물을 담을 ul
   ul.className = "list-group p-5 post-group";
 
   const prevButton = document.querySelector(".prev-button");
@@ -92,7 +99,10 @@
         const postLink = document.createElement("a");
         postLink.className = "link";
         postLink.id = "link";
-        postLink.href = `/detail/${data[i].postNumber}`;
+        postLink.href =
+          data[i].category == "notice"
+            ? `/noticeDetail/${data[i].postNumber}`
+            : `/detail/${data[i].postNumber}`;
 
         const div1 = document.createElement("div");
         const div2 = document.createElement("div");
@@ -125,10 +135,14 @@
 
         const uploadImg = document.createElement("img");
         const imgType = data[i].upload.split(".");
-        uploadImg.src =
-          imgType[1] == "mp4"
-            ? "public/icon/video.png"
-            : "public/icon/gallery.png";
+        if (imgType[1] == "mp4") {
+          uploadImg.src = "public/icon/video.png";
+        } else if (imgType[1] == "mp3") {
+          uploadImg.src = "public/icon/sound.png";
+        } else {
+          uploadImg.src = "public/icon/gallery.png";
+        }
+
         uploadImg.className = "list_img-icon";
 
         postNumber.textContent = `no. ${data[i].postNumber}`;

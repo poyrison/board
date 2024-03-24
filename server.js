@@ -11,6 +11,8 @@ const fs = require("fs");
 const bcrypt = require("bcrypt"); //암호화
 const saltRounds = 10;
 const router = express.Router();
+const AWS = require("@aws-sdk/client-s3");
+
 const moment = require("moment");
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
@@ -31,14 +33,21 @@ let db;
 
 // 날짜
 const uploadTime = moment().format("YYYYMMDDHHmmss");
-
-// let multer = require("multer");
-
 const { S3Client } = require("@aws-sdk/client-s3");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
+const { env } = require("process");
+
+const AWS_S3 = new AWS.S3({
+  region: process.env.S3_REGION,
+  credentials: {
+    accessKeyId: process.env.S3_KEY,
+    secretAccessKey: process.env.S3_SECRET,
+  },
+});
+
 const s3 = new S3Client({
-  region: "ap-northeast-2",
+  region: process.env.S3_REGION,
   credentials: {
     accessKeyId: process.env.S3_KEY,
     secretAccessKey: process.env.S3_SECRET,
@@ -61,7 +70,7 @@ const s3 = new S3Client({
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.S3_REGION,
+    bucket: process.env.S3_BUCKET,
     key: function (req, file, cb) {
       const ext = path.extname(file.originalname); // 확장자명(.png, .jpg, .jpeg등)
       cb(null, path.basename(file.originalname, ext) + uploadTime + ext);
@@ -98,19 +107,79 @@ const loginCheck = (req, res, next) => {
 
 // =======  home  =======
 app.get("/", (req, res) => {
-  db.collection("post")
-    .find()
-    .toArray((err, result) => {
-      db.collection("comment")
+  Promise.all([
+    db.collection("notice").find().toArray(),
+    db.collection("post").find().toArray(),
+  ])
+    .then(([noticeResult, postResult]) => {
+      return db
+        .collection("comment")
         .find()
-        .toArray((err, result2) => {
+        .toArray()
+        .then((commentResult) => {
           res.render("index.ejs", {
-            posts: result,
+            notice: noticeResult,
+            posts: postResult,
             user: req.user,
-            comments: result2,
+            comments: commentResult,
           });
         });
-      //console.log(result);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+});
+
+// ======= notice =======
+app.get("/notice", (req, res) => {
+  Promise.all([
+    db.collection("notice").find().toArray(),
+    db.collection("post").find().toArray(),
+  ])
+    .then(([noticeResult, postResult]) => {
+      return db
+        .collection("comment")
+        .find()
+        .toArray()
+        .then((commentResult) => {
+          res.render("notice.ejs", {
+            notice: noticeResult,
+            posts: postResult,
+            user: req.user,
+            comments: commentResult,
+          });
+        });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+});
+
+// =======  게시물 없을 때  =======
+app.get("/noPost", (req, res) => {
+  Promise.all([
+    db.collection("notice").find().toArray(),
+    db.collection("post").find().toArray(),
+  ])
+    .then(([noticeResult, postResult]) => {
+      return db
+        .collection("comment")
+        .find()
+        .toArray()
+        .then((commentResult) => {
+          res.render("noPost.ejs", {
+            notice: noticeResult,
+            posts: postResult,
+            user: req.user,
+            comments: commentResult,
+          });
+        });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
     });
 });
 
@@ -119,6 +188,32 @@ app.get("/detail/:id", (req, res) => {
   const postId = parseInt(req.params.id);
 
   db.collection("post")
+    .findOne({ _id: postId })
+    .then((post) => {
+      if (!post) {
+        return res.status(404).render("404.ejs");
+      }
+      return db
+        .collection("comment")
+        .find({ parentAddress: postId })
+        .toArray((err, comment) => {
+          res.render("detail.ejs", {
+            posts: post,
+            user: req.user,
+            comments: comment,
+          });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).render("500.ejs");
+    });
+});
+
+// =======  notice detail  =======
+app.get("/noticeDetail/:id", (req, res) => {
+  const postId = parseInt(req.params.id);
+
+  db.collection("notice")
     .findOne({ _id: postId })
     .then((post) => {
       if (!post) {
@@ -169,6 +264,15 @@ app.post("/comment", (req, res) => {
         },
         (err, result) => {}
       );
+      db.collection("notice").updateOne(
+        { _id: parseInt(req.body.id) },
+        {
+          $inc: {
+            cmtCount: 1,
+          },
+        },
+        (err, result) => {}
+      );
     });
   });
 });
@@ -186,9 +290,38 @@ app.get("/edit/:id", loginCheck, (req, res) => {
     }
   );
 });
-
 app.put("/edit", (req, res) => {
   db.collection("post").updateOne(
+    { _id: parseInt(req.body.id) },
+    {
+      $set: {
+        title: req.body.name,
+        content: req.body.content,
+        // date: req.body.modifiedDate,
+        isModified: true,
+      },
+    },
+    (err, result) => {
+      // res.redirect(`/detail/${req.body.id}`);
+    }
+  );
+});
+
+// =======  noticeEdit  =======
+app.get("/noticeEdit/:id", loginCheck, (req, res) => {
+  db.collection("notice").findOne(
+    { _id: parseInt(req.params.id) },
+    (err, result) => {
+      res.render("edit.ejs", {
+        posts: result,
+        user: req.user,
+        isModified: result,
+      });
+    }
+  );
+});
+app.put("/noticeEdit", (req, res) => {
+  db.collection("notice").updateOne(
     { _id: parseInt(req.body.id) },
     {
       $set: {
@@ -328,57 +461,121 @@ passport.use(
 // =======  add  =======
 app.post("/add", upload.single("image"), (req, res) => {
   if (req.file) {
-    db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-      let totalPost = result.totalPost;
-      const fileName = req.file.originalname;
+    if (req.user.id === "manager") {
+      db.collection("counter").findOne({ name: "공지갯수" }, (err, result) => {
+        let totalNotice = result.totalNotice;
 
-      let saveItem = {
-        _id: totalPost + 1,
-        writerId: req.user.id,
-        writer: req.user.name,
-        date: req.body.addDate,
-        title: req.body.title,
-        content: req.body.content,
-        cmtCount: 0,
-        isModified: false,
-        upload: req.file.key,
-      };
+        let saveItem = {
+          _id: totalNotice + 1,
+          writerId: req.user.id,
+          writer: req.user.name,
+          date: req.body.addDate,
+          title: req.body.title,
+          content: req.body.content,
+          cmtCount: 0,
+          isModified: false,
+          category: "notice",
+          upload: req.file.key,
+        };
 
-      db.collection("post").insertOne(saveItem, () => {
-        db.collection("counter").updateOne(
-          { name: "게시물갯수" },
-          { $inc: { totalPost: 1 } },
-          (err, result) => {
-            if (err) res.sendFile(__dirname + "500.ejs");
-          }
-        );
+        db.collection("notice").insertOne(saveItem, () => {
+          db.collection("counter").updateOne(
+            { name: "공지갯수" },
+            { $inc: { totalNotice: 1 } },
+            (err, result) => {
+              if (err) res.sendFile(__dirname + "500.ejs");
+            }
+          );
+        });
       });
-    });
+    } else {
+      db.collection("counter").findOne(
+        { name: "게시물갯수" },
+        (err, result) => {
+          let totalPost = result.totalPost;
+
+          let saveItem = {
+            _id: totalPost + 1,
+            writerId: req.user.id,
+            writer: req.user.name,
+            date: req.body.addDate,
+            title: req.body.title,
+            content: req.body.content,
+            cmtCount: 0,
+            isModified: false,
+            category: "normal",
+            upload: req.file.key,
+          };
+
+          db.collection("post").insertOne(saveItem, () => {
+            db.collection("counter").updateOne(
+              { name: "게시물갯수" },
+              { $inc: { totalPost: 1 } },
+              (err, result) => {
+                if (err) res.sendFile(__dirname + "500.ejs");
+              }
+            );
+          });
+        }
+      );
+    }
   } else {
-    db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
-      let totalPost = result.totalPost;
+    if (req.user.id === "manager") {
+      db.collection("counter").findOne({ name: "공지갯수" }, (err, result) => {
+        let totalNotice = result.totalNotice;
 
-      let saveItem = {
-        _id: totalPost + 1,
-        writerId: req.user.id,
-        writer: req.user.name,
-        date: req.body.addDate,
-        title: req.body.title,
-        content: req.body.content,
-        cmtCount: 0,
-        isModified: false,
-      };
+        let saveItem = {
+          _id: totalNotice + 1,
+          writerId: req.user.id,
+          writer: req.user.name,
+          date: req.body.addDate,
+          title: req.body.title,
+          content: req.body.content,
+          cmtCount: 0,
+          isModified: false,
+          category: "notice",
+        };
 
-      db.collection("post").insertOne(saveItem, () => {
-        db.collection("counter").updateOne(
-          { name: "게시물갯수" },
-          { $inc: { totalPost: 1 } },
-          (err, result) => {
-            if (err) res.sendFile(__dirname + "500.ejs");
-          }
-        );
+        db.collection("notice").insertOne(saveItem, () => {
+          db.collection("counter").updateOne(
+            { name: "공지갯수" },
+            { $inc: { totalNotice: 1 } },
+            (err, result) => {
+              if (err) res.sendFile(__dirname + "500.ejs");
+            }
+          );
+        });
       });
-    });
+    } else {
+      db.collection("counter").findOne(
+        { name: "게시물갯수" },
+        (err, result) => {
+          let totalPost = result.totalPost;
+
+          let saveItem = {
+            _id: totalPost + 1,
+            writerId: req.user.id,
+            writer: req.user.name,
+            date: req.body.addDate,
+            title: req.body.title,
+            content: req.body.content,
+            cmtCount: 0,
+            isModified: false,
+            category: "normal",
+          };
+
+          db.collection("post").insertOne(saveItem, () => {
+            db.collection("counter").updateOne(
+              { name: "게시물갯수" },
+              { $inc: { totalPost: 1 } },
+              (err, result) => {
+                if (err) res.sendFile(__dirname + "500.ejs");
+              }
+            );
+          });
+        }
+      );
+    }
   }
 });
 // 파일을 여러개 업로드 하고싶으면 upload.array("image", 5 //최대 업로드 갯수 설정)
@@ -394,16 +591,9 @@ app.delete("/delete", (req, res) => {
   if (req.body.writerId == req.user.id || req.user.id == "manager") {
     if (req.body.upload) {
       const params = {
-        Bucket: process.env.S3_REGION,
+        Bucket: process.env.S3_BUCKET,
         Key: req.body.upload,
       };
-
-      try {
-        s3.deleteObject(params).promise();
-        console.log(`Image ${imageKey} deleted from S3.`);
-      } catch (error) {
-        console.error(`Error deleting image from S3: ${error}`);
-      }
       db.collection("post").deleteOne(req.body, (err, result) => {
         db.collection("comment").deleteMany(
           { parentAddress: req.body._id },
@@ -412,11 +602,21 @@ app.delete("/delete", (req, res) => {
           }
         );
       });
+      AWS_S3.deleteObject(params, (error, data) => {
+        if (error) {
+          console.error(`S3의 이미지를 삭제하는데 오류 발생: ${error}`);
+          res.status(500).send({ error: "에러" });
+        } else {
+          console.log(`S3에서 ${req.body.upload} 삭제 완료.`);
+          res.status(200).send({ message: "이미지 삭제 완료" });
+        }
+      });
     } else {
       db.collection("post").deleteOne(req.body, (err, result) => {
         db.collection("comment").deleteMany(
           { parentAddress: req.body._id },
           (err, result) => {
+            console.log("삭제 성공");
             res.status(200).send({ message: "성공했습니다." });
           }
         );
@@ -445,6 +645,15 @@ app.delete("/cmtDelete", (req, res) => {
         },
         (err, result) => {}
       );
+      db.collection("notice").updateOne(
+        { _id: req.body._id },
+        {
+          $inc: {
+            cmtCount: -1,
+          },
+        },
+        (err, result) => {}
+      );
       res.status(200).send({ message: "성공했습니다." });
     }
   );
@@ -463,29 +672,51 @@ app.get("/write", loginCheck, (req, res) => {
 // =======  search  =======
 app.get("/search", (req, res) => {
   // test1처럼 붙여서 쓰면 검색해도 나오지 않음 test 1이라고 해야 나옴
+  // test하고 한칸 띄워서 검색하면 test1 test 2 다 나옴
+
+  const searchValue = req.query.value;
+
   let searchCondition = [
     {
       $search: {
         index: "title_index",
         text: {
-          query: req.query.value,
-          path: "title", // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+          query: searchValue,
+          path: ["title", "writer"], // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
         },
       },
     },
-    // {$sort : {_id:-1}}, //_id:1 오름차순으로 결과 출력 -1은 내림차순 결과 출력
+    { $sort: { _id: 1 } }, //_id:1 오름차순으로 결과 출력 -1은 내림차순 결과 출력
     // {$limit : 2},
   ];
+
   db.collection("post")
     .aggregate(searchCondition)
-    .toArray((err, result) => {
-      // console.log(result);
-      res.render("search.ejs", { posts: result, user: req.user });
+    .toArray()
+    .then((postResult) => {
+      // post 데이터 검색이 완료되면 해당 결과를 이용하여 렌더링
+      return Promise.all([
+        db.collection("notice").find().toArray(),
+        db.collection("comment").find().toArray(),
+      ])
+        .then(([noticeResult, commentResult]) => {
+          res.render("search.ejs", {
+            notice: noticeResult,
+            posts: postResult,
+            user: req.user,
+            comments: commentResult,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+          res.sendStatus(500);
+        });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
     });
 });
-// app.get('/search', async (req, res) => {
-//   let result = await db.collection("post").find({$text : {req.query.value}})
-// })
 
 // =======  logout  =======
 app.get("/logout", (req, res, next) => {

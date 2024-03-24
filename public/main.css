@@ -66,6 +66,33 @@ textarea {
   margin-top: 30px;
 }
 
+.category-box {
+  position: absolute;
+  top: 105px;
+  left: 250px;
+  border: solid 1px #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.category-box ul {
+  padding: 20px 40px 20px 10px;
+  margin-bottom: 0;
+}
+.category-box ul :first-child {
+  margin-bottom: 1rem;
+}
+.category-box ul b {
+  color: #126fc5;
+}
+.category-box li {
+  list-style: none;
+}
+.category-box li a {
+  color: black;
+}
+.category-box li:hover {
+  cursor: pointer;
+}
 /* .list-group {
   text-align: center;
 } */
@@ -183,7 +210,7 @@ textarea {
   position: fixed;
   width: 100%;
   z-index: 9999;
-  padding: 8px 80px;
+  padding: 10px 80px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -279,4 +306,10 @@ textarea {
 
 /* myPage */
 .myPage-wrapper {
+}
+
+/* noPost */
+#noPost {
+  text-align: center;
+  margin-top: 300px;
 }

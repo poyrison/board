@@ -18,14 +18,34 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
+    <!-- favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/public/icon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/public/icon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/public/icon/favicon-16x16.png"
+    />
   </head>
   <body>
-    <%- include('nav.ejs') %>
+    <%- include('nav.ejs') %><%- include('categoryBox.ejs', { notice: notice,
+    posts: posts }) %>
     <div class="container">
       <!-- 게시물 데이터-->
       <ul class="list-group p-5 post-group blind" id="post-group">
         <input value="<%= posts.length %>" id="post-length" />
         <% for(let i = 0; i < posts.length; i++){ %>
+        <p class="category" data-class="<%= posts[i].category %>"></p>
         <a href="/detail/<%= posts[i]._id %>" id="link" class="link">
           <li
             class="list-group-item list-group-item-action"
@@ -88,7 +108,17 @@
         <% } %>
       </ul>
       <!-- 게시물 -->
-      <ul id="post-ul"></ul>
+      <ul id="post-ul">
+        <li>
+          <div class="post-container">
+            <p class="post-number"></p>
+            <p class="post-title"></p>
+            <p class="post-cmtNo"></p>
+            <p class="post-writer"></p>
+            <p class="post-date"></p>
+          </div>
+        </li>
+      </ul>
       <!-- 페이지네이션 -->
       <div class="pagination-container">
         <div class="prev-button">&lt;</div>
@@ -99,7 +129,10 @@
       </div>
       <!-- 페이지네이션 끝 -->
     </div>
-    <%- include('footer.ejs') %> <%- include('pagination.ejs') %>
+    <!-- footer -->
+    <%- include('footer.ejs') %>
+    <!-- 페이지네이션 -->
+    <%- include('pagination.ejs') %>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script
@@ -112,6 +145,16 @@
       integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
       crossorigin="anonymous"
     ></script>
+    <script>
+      const postLength = document.querySelector("#post-length").value;
+      if (postLength <= 0) {
+        swal({
+          title: "검색어에 맞는 게시물이 없습니다.",
+          icon: "warning",
+        });
+        window.location.href = "/";
+      }
+    </script>
     <script>
       $("#searchBtn").click(() => {
         let searchValue = $("#searchInput").val();

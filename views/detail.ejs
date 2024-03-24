@@ -34,6 +34,24 @@
       src="https://kit.fontawesome.com/1f2a889857.js"
       crossorigin="anonymous"
     ></script>
+    <!-- favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/public/icon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/public/icon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/public/icon/favicon-16x16.png"
+    />
   </head>
   <body>
     <%- include('nav.ejs') %>
@@ -68,16 +86,19 @@
             <% if(posts.upload){%> <% const str = posts.upload; const word =
             str.split('.');if(word[1] == 'mp4'){%>
             <video controls width="400" height="700" id="video">
-              <!-- <source
-                src="../public/image/<%= posts.upload %>"
-                type="video/webm"
-              /> -->
               <source
                 src="https://board-image-server.s3.ap-northeast-2.amazonaws.com/<%= posts.upload %>"
                 type="video/webm"
               />
             </video>
-            <%}else {%>
+            <%}else if(word[1] == 'mp3'){%>
+            <audio controls id="audio">
+              <source
+                src="https://board-image-server.s3.ap-northeast-2.amazonaws.com/<%= posts.upload %>"
+                type="audio/mpeg"
+              />
+            </audio>
+            <%} else {%>
             <img
               src="https://board-image-server.s3.ap-northeast-2.amazonaws.com/<%= posts.upload %>"
               style="max-width: 800px; max-height: 800px"
@@ -190,6 +211,7 @@
             <button
               type="submit"
               class="btn btn-dark"
+              data-category="<%= posts.category %>"
               id="cmt-btn"
               data-id="<%= posts._id %>"
               data-writer="<%= user.name %>"
@@ -228,6 +250,9 @@
       // 비디오 볼륨 조절
       document.querySelector("#video")
         ? (document.querySelector("#video").volume = 0.3)
+        : null;
+      document.querySelector("#audio")
+        ? (document.querySelector("#audio").volume = 0.3)
         : null;
       $(".delete").click((e) => {
         swal({
@@ -286,7 +311,11 @@
           dangerMode: true,
         }).then((willModify) => {
           if (willModify) {
-            window.location.href = `/edit/${e.target.dataset.id}`;
+            if ("<%= posts.category %>" == "notice") {
+              window.location.href = `/noticeEdit/${e.target.dataset.id}`;
+            } else {
+              window.location.href = `/edit/${e.target.dataset.id}`;
+            }
           }
         });
       });
@@ -326,23 +355,43 @@
             dangerMode: true,
           }).then((willCmt) => {
             if (willCmt) {
-              $.ajax({
-                method: "POST",
-                url: "/comment",
-                data: {
-                  comment: commentValue,
-                  id: e.target.dataset.id,
-                  cmtWriter: e.target.dataset.writer,
-                  cmtTime: cmtTime,
-                },
-              }).done(
-                swal({
-                  title: "댓글을 작성했습니다.",
-                  icon: "success",
-                }).then((res) => {
-                  window.location.href = `/detail/${e.target.dataset.id}`;
-                })
-              );
+              if (e.target.dataset.category == "notice") {
+                $.ajax({
+                  method: "POST",
+                  url: "/comment",
+                  data: {
+                    comment: commentValue,
+                    id: e.target.dataset.id,
+                    cmtWriter: e.target.dataset.writer,
+                    cmtTime: cmtTime,
+                  },
+                }).done(
+                  swal({
+                    title: "댓글을 작성했습니다.",
+                    icon: "success",
+                  }).then((res) => {
+                    window.location.href = `/noticeDetail/${e.target.dataset.id}`;
+                  })
+                );
+              } else {
+                $.ajax({
+                  method: "POST",
+                  url: "/comment",
+                  data: {
+                    comment: commentValue,
+                    id: e.target.dataset.id,
+                    cmtWriter: e.target.dataset.writer,
+                    cmtTime: cmtTime,
+                  },
+                }).done(
+                  swal({
+                    title: "댓글을 작성했습니다.",
+                    icon: "success",
+                  }).then((res) => {
+                    window.location.href = `/detail/${e.target.dataset.id}`;
+                  })
+                );
+              }
             }
           });
         }
