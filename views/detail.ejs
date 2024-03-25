@@ -262,42 +262,82 @@
           dangerMode: true,
         }).then((willDelete) => {
           if (willDelete) {
-            if (e.target.dataset.upload) {
-              $.ajax({
-                method: "DELETE",
-                url: "/delete",
-                data: {
-                  _id: e.target.dataset.id,
-                  writerId: e.target.dataset.writer_id,
-                  writer: e.target.dataset.writer,
-                  upload: e.target.dataset.upload,
-                },
-              }).done(
-                swal({
-                  title: "삭제를 완료했습니다!",
-                  icon: "success",
-                }).then((res) => {
-                  location.replace("/");
-                })
-              );
+            if ("<%= posts.category %>" == "notice") {
+              if (e.target.dataset.upload) {
+                $.ajax({
+                  method: "DELETE",
+                  url: "/noticeDelete",
+                  data: {
+                    _id: e.target.dataset.id,
+                    writerId: e.target.dataset.writer_id,
+                    writer: e.target.dataset.writer,
+                    upload: e.target.dataset.upload,
+                  },
+                }).done(
+                  swal({
+                    title: "삭제를 완료했습니다!",
+                    icon: "success",
+                  }).then((res) => {
+                    location.replace("/");
+                  })
+                );
+              } else {
+                $.ajax({
+                  method: "DELETE",
+                  url: "/noticeDelete",
+                  data: {
+                    _id: e.target.dataset.id,
+                    writerId: e.target.dataset.writer_id,
+                    writer: e.target.dataset.writer,
+                  },
+                }).done(
+                  swal({
+                    title: "삭제를 완료했습니다!",
+                    icon: "success",
+                  }).then((res) => {
+                    console.log("삭제 완료");
+                    location.replace("/");
+                  })
+                );
+              }
             } else {
-              $.ajax({
-                method: "DELETE",
-                url: "/delete",
-                data: {
-                  _id: e.target.dataset.id,
-                  writerId: e.target.dataset.writer_id,
-                  writer: e.target.dataset.writer,
-                },
-              }).done(
-                swal({
-                  title: "삭제를 완료했습니다!",
-                  icon: "success",
-                }).then((res) => {
-                  console.log("삭제 완료");
-                  location.replace("/");
-                })
-              );
+              if (e.target.dataset.upload) {
+                $.ajax({
+                  method: "DELETE",
+                  url: "/delete",
+                  data: {
+                    _id: e.target.dataset.id,
+                    writerId: e.target.dataset.writer_id,
+                    writer: e.target.dataset.writer,
+                    upload: e.target.dataset.upload,
+                  },
+                }).done(
+                  swal({
+                    title: "삭제를 완료했습니다!",
+                    icon: "success",
+                  }).then((res) => {
+                    location.replace("/");
+                  })
+                );
+              } else {
+                $.ajax({
+                  method: "DELETE",
+                  url: "/delete",
+                  data: {
+                    _id: e.target.dataset.id,
+                    writerId: e.target.dataset.writer_id,
+                    writer: e.target.dataset.writer,
+                  },
+                }).done(
+                  swal({
+                    title: "삭제를 완료했습니다!",
+                    icon: "success",
+                  }).then((res) => {
+                    console.log("삭제 완료");
+                    location.replace("/");
+                  })
+                );
+              }
             }
           }
         });

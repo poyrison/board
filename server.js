@@ -209,7 +209,7 @@ app.get("/detail/:id", (req, res) => {
     });
 });
 
-// =======  notice detail  =======
+// =======  noticeDetail  =======
 app.get("/noticeDetail/:id", (req, res) => {
   const postId = parseInt(req.params.id);
 
@@ -312,7 +312,7 @@ app.get("/noticeEdit/:id", loginCheck, (req, res) => {
   db.collection("notice").findOne(
     { _id: parseInt(req.params.id) },
     (err, result) => {
-      res.render("edit.ejs", {
+      res.render("noticeEdit.ejs", {
         posts: result,
         user: req.user,
         isModified: result,
@@ -624,6 +624,45 @@ app.delete("/delete", (req, res) => {
     }
   } else {
     console.log("게시물의 작성자가 아닙니다.");
+  }
+});
+
+// =======  noticeDelete  =======
+app.delete("/noticeDelete", (req, res) => {
+  req.body._id = parseInt(req.body._id);
+
+  if (req.body.upload) {
+    const params = {
+      Bucket: process.env.S3_BUCKET,
+      Key: req.body.upload,
+    };
+    db.collection("notice").deleteOne(req.body, (err, result) => {
+      db.collection("comment").deleteMany(
+        { parentAddress: req.body._id },
+        (err, result) => {
+          res.status(200).send({ message: "성공했습니다." });
+        }
+      );
+    });
+    AWS_S3.deleteObject(params, (error, data) => {
+      if (error) {
+        console.error(`S3의 이미지를 삭제하는데 오류 발생: ${error}`);
+        res.status(500).send({ error: "에러" });
+      } else {
+        console.log(`S3에서 ${req.body.upload} 삭제 완료.`);
+        res.status(200).send({ message: "이미지 삭제 완료" });
+      }
+    });
+  } else {
+    db.collection("notice").deleteOne(req.body, (err, result) => {
+      db.collection("comment").deleteMany(
+        { parentAddress: req.body._id },
+        (err, result) => {
+          console.log("삭제 성공");
+          res.status(200).send({ message: "성공했습니다." });
+        }
+      );
+    });
   }
 });
 
