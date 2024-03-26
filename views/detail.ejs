@@ -464,6 +464,56 @@
         });
       });
     </script>
+    <script>
+      $("#searchBtn").click(() => {
+        let searchValue = $("#searchInput").val();
+        if (searchValue.length == 0) {
+          swal({
+            title: "검색어를 입력해주세요",
+            icon: "warning",
+          });
+        } else {
+          let inputValue = $("#searchInput").val();
+          window.location.replace(`/search?value=${inputValue}`);
+        }
+      });
+      $("#searchInput").on("keypress", (e) => {
+        if (e.key === "Enter") {
+          let searchValue = $("#searchInput").val();
+          if (searchValue.length == 0) {
+            swal({
+              title: "검색어를 입력해주세요",
+              icon: "warning",
+            });
+          } else {
+            let inputValue = $("#searchInput").val();
+            window.location.replace(`/search?value=${inputValue}`);
+          }
+        }
+      });
+      $(".loginCheck").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "글 쓰기는 로그인 후 이용가능합니다.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((loginCheck) => {
+          if (loginCheck) {
+            $.ajax({
+              method: "GET",
+              url: "/write",
+            })
+              .done((result) => {
+                window.location.href = "/write";
+              })
+              .fail((xhr, code, err) => {
+                console.log(xhr, code, err);
+              });
+          }
+        });
+      });
+    </script>
     <script
       async
       src="https://d-collect.jennifersoft.com/1a32e5f6/demian.js"

@@ -709,52 +709,39 @@ app.get("/write", loginCheck, (req, res) => {
 });
 
 // =======  search  =======
-app.get("/search", (req, res) => {
-  // test1처럼 붙여서 쓰면 검색해도 나오지 않음 test 1이라고 해야 나옴
-  // test하고 한칸 띄워서 검색하면 test1 test 2 다 나옴
+app.get("/search", async (req, res) => {
+  try {
+    const searchValue = req.query.value;
 
-  const searchValue = req.query.value;
-
-  let searchCondition = [
-    {
-      $search: {
-        index: "title_index",
-        text: {
-          query: searchValue,
-          path: ["title", "writer"], // 제목날짜 둘다 찾고 싶으면 ['제목', '날짜']
+    const searchCondition = [
+      {
+        $search: {
+          index: "title_index",
+          text: {
+            query: searchValue,
+            path: ["title", "writer"],
+          },
         },
       },
-    },
-    { $sort: { _id: 1 } }, //_id:1 오름차순으로 결과 출력 -1은 내림차순 결과 출력
-    // {$limit : 2},
-  ];
+      { $sort: { _id: 1 } },
+    ];
 
-  db.collection("post")
-    .aggregate(searchCondition)
-    .toArray()
-    .then((postResult) => {
-      // post 데이터 검색이 완료되면 해당 결과를 이용하여 렌더링
-      return Promise.all([
-        db.collection("notice").find().toArray(),
-        db.collection("comment").find().toArray(),
-      ])
-        .then(([noticeResult, commentResult]) => {
-          res.render("search.ejs", {
-            notice: noticeResult,
-            posts: postResult,
-            user: req.user,
-            comments: commentResult,
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-          res.sendStatus(500);
-        });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
+    const [postResult, noticeResult, commentResult] = await Promise.all([
+      db.collection("post").aggregate(searchCondition).toArray(),
+      db.collection("notice").find().toArray(),
+      db.collection("comment").find().toArray(),
+    ]);
+
+    res.render("search.ejs", {
+      notice: noticeResult,
+      posts: postResult,
+      user: req.user,
+      comments: commentResult,
     });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 });
 
 // =======  logout  =======
