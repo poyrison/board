@@ -20,6 +20,16 @@ textarea {
   visibility: "hidden";
 }
 
+.visible {
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.invisible {
+  opacity: 0;
+  transition: 0.3s;
+}
+
 .container {
   min-width: 768px;
   height: 100%;
@@ -128,6 +138,7 @@ textarea {
   justify-content: center;
   align-items: baseline;
   display: flex;
+  padding: 0 250px;
 }
 
 .list_title {
@@ -306,6 +317,79 @@ textarea {
 
 /* myPage */
 .myPage-wrapper {
+  border: 2px #ccc solid;
+  border-radius: 10px;
+  padding: 30px 30px;
+  margin-top: 150px;
+}
+
+.profile-photo_box {
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.profile-photo_box img {
+  justify-content: flex-end;
+  border: 3px solid transparent;
+  transition: 0.3s;
+  border-radius: 50%;
+  margin-block: 50px;
+}
+
+.profile-photo_box img:hover {
+  border: 3px solid rgb(48, 221, 126);
+}
+
+.profile-photo:hover {
+  cursor: pointer;
+}
+
+.profile-cover_box {
+  position: relative;
+  justify-content: center;
+}
+
+.profile-cover {
+  background-color: #9e9e9e;
+  color: #eee;
+  text-align: center;
+  position: absolute;
+  padding: 0;
+  bottom: 70px;
+  width: 78%;
+  height: calc(50% - 110px);
+  border-bottom-left-radius: 100px;
+  border-bottom-right-radius: 100px;
+}
+
+.profile-cover p {
+  margin-top: 24px;
+}
+
+.profile-cover:hover {
+  cursor: pointer;
+}
+
+.profile-name {
+  margin-bottom: 50px;
+}
+
+.profile-name span {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.profile-name_edit form input {
+  height: 100%;
+}
+
+.profile-name_box {
+  justify-content: column;
+}
+
+.profile-btn_box {
+  margin-top: 30px;
+  justify-content: flex-end;
 }
 
 /* noPost */

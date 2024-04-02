@@ -265,7 +265,7 @@
             if ("<%= posts.category %>" == "notice") {
               if (e.target.dataset.upload) {
                 $.ajax({
-                  method: "DELETE",
+                  method: "delete",
                   url: "/noticeDelete",
                   data: {
                     _id: e.target.dataset.id,
@@ -273,7 +273,7 @@
                     writer: e.target.dataset.writer,
                     upload: e.target.dataset.upload,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "삭제를 완료했습니다!",
                     icon: "success",
@@ -283,14 +283,14 @@
                 );
               } else {
                 $.ajax({
-                  method: "DELETE",
+                  method: "delete",
                   url: "/noticeDelete",
                   data: {
                     _id: e.target.dataset.id,
                     writerId: e.target.dataset.writer_id,
                     writer: e.target.dataset.writer,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "삭제를 완료했습니다!",
                     icon: "success",
@@ -303,7 +303,7 @@
             } else {
               if (e.target.dataset.upload) {
                 $.ajax({
-                  method: "DELETE",
+                  method: "delete",
                   url: "/delete",
                   data: {
                     _id: e.target.dataset.id,
@@ -311,7 +311,7 @@
                     writer: e.target.dataset.writer,
                     upload: e.target.dataset.upload,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "삭제를 완료했습니다!",
                     icon: "success",
@@ -321,14 +321,14 @@
                 );
               } else {
                 $.ajax({
-                  method: "DELETE",
+                  method: "delete",
                   url: "/delete",
                   data: {
                     _id: e.target.dataset.id,
                     writerId: e.target.dataset.writer_id,
                     writer: e.target.dataset.writer,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "삭제를 완료했습니다!",
                     icon: "success",
@@ -397,7 +397,7 @@
             if (willCmt) {
               if (e.target.dataset.category == "notice") {
                 $.ajax({
-                  method: "POST",
+                  method: "post",
                   url: "/comment",
                   data: {
                     comment: commentValue,
@@ -405,7 +405,7 @@
                     cmtWriter: e.target.dataset.writer,
                     cmtTime: cmtTime,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "댓글을 작성했습니다.",
                     icon: "success",
@@ -415,7 +415,7 @@
                 );
               } else {
                 $.ajax({
-                  method: "POST",
+                  method: "post",
                   url: "/comment",
                   data: {
                     comment: commentValue,
@@ -423,7 +423,7 @@
                     cmtWriter: e.target.dataset.writer,
                     cmtTime: cmtTime,
                   },
-                }).done(
+                }).then(
                   swal({
                     title: "댓글을 작성했습니다.",
                     icon: "success",
@@ -445,13 +445,13 @@
         }).then((willDelete) => {
           if (willDelete) {
             $.ajax({
-              method: "DELETE",
+              method: "delete",
               url: "/cmtDelete",
               data: {
                 _id: e.target.dataset.id,
                 cmtNo: e.target.dataset.cmt_no,
               },
-            }).done(
+            }).then(
               swal({
                 title: "삭제를 완료했습니다!",
                 icon: "success",
@@ -501,10 +501,10 @@
         }).then((loginCheck) => {
           if (loginCheck) {
             $.ajax({
-              method: "GET",
-              url: "/write",
+              method: "get",
+              url: "write",
             })
-              .done((result) => {
+              .then((result) => {
                 window.location.href = "/write";
               })
               .fail((xhr, code, err) => {

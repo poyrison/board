@@ -22,6 +22,24 @@
       rel="stylesheet"
       href="https://unicons.iconscout.com/release/v4.0.8/css/line.css"
     />
+    <!-- favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/public/icon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/public/icon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/public/icon/favicon-16x16.png"
+    />
   </head>
   <body>
     <%- include('nav.ejs') %>
@@ -82,6 +100,8 @@
         </div>
       </div>
     </div>
+    <!-- footer -->
+    <%- include('footer.ejs') %>
     <script>
       $("#searchBtn").click(() => {
         let searchValue = $("#searchInput").val();
@@ -118,20 +138,21 @@
           dangerMode: true,
         }).then((loginCheck) => {
           if (loginCheck) {
-            $.ajax({
-              method: "GET",
+            axios({
+              method: "get",
               url: "/write",
             })
-              .done((result) => {
+              .then((result) => {
                 window.location.href = "/write";
               })
-              .fail((xhr, code, err) => {
+              .catch((xhr, code, err) => {
                 console.log(xhr, code, err);
               });
           }
         });
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script

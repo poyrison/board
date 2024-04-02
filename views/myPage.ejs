@@ -17,19 +17,128 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
+    <!-- favicon -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/public/icon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/public/icon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/public/icon/favicon-16x16.png"
+    />
   </head>
   <body>
     <%- include('nav.ejs') %>
     <div class="container">
       <div class="myPage-wrapper">
-        <p><%= user.name %>님의 마이페이지입니다.</p>
-        <button class="btn btn-danger" id="logoutInMyPage">로그아웃</button>
+        <div class="profile-photo_box flex">
+          <div class="profile-cover_box flex">
+            <img
+              src="/public/icon/profile.png"
+              alt="프로필 사진"
+              name="프로필 사진"
+              value="<%= user.name %>"
+              class="profile-photo"
+            />
+            <div class="profile-cover invisible"><p>이미지 편집</p></div>
+          </div>
+          <div class="profile-name_box">
+            <div class="profile-name">
+              <h3 style="display: inline-block">이름:</h3>
+              <span><%= user.name %></span>
+            </div>
+            <div class="profile-name_edit flex">
+              <form action="/userInfoCheck" method="POST" id="myForm">
+                <input
+                  type="text"
+                  id="userName"
+                  name="userName"
+                  style="vertical-align: middle"
+                />
+                <button class="btn btn-info m-0 ml-2 duplicateCheckButton">
+                  중복 체크
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="profile-btn_box flex">
+          <input
+            value="<%= user.id %>"
+            id="userID"
+            name="userID"
+            class="blind"
+          />
+          <button class="btn btn-outline-primary profile-update">
+            프로필 수정
+          </button>
+          <button class="btn btn-outline-danger profile-logout">
+            로그아웃
+          </button>
+        </div>
       </div>
     </div>
-
+    <!-- footer -->
+    <%- include('footer.ejs') %>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
-      $("#logoutInMyPage").click((e) => {
+      // 프로필 수정
+      let userNameValue = "";
+      const userID = $("#userID").val();
+
+      $("#userName").on("input", function () {
+        userNameValue = $(this).val();
+      });
+
+      $(".profile-update").click((e) => {
+        e.preventDefault();
+
+        swal({
+          title: "프로필을 수정 하시겠습니까?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((willModify) => {
+          if (willModify) {
+            if (!userNameValue) {
+              swal({
+                title: "이름을 적어주세요",
+                icon: "error",
+              });
+            } else {
+              $.ajax({
+                method: "put",
+                url: "/userInfoEdit",
+                data: {
+                  id: userID,
+                  userName: userNameValue,
+                },
+              });
+              swal({
+                title: "프로필이 수정되었습니다.",
+                icon: "success",
+              })
+                .then((success) => {
+                  window.location.reload();
+                })
+                .catch((xhr, code, err) => {
+                  console.log(xhr, code, err);
+                });
+            }
+          }
+        });
+      });
+
+      $(".profile-logout").click((e) => {
         swal({
           title: "로그아웃 하시겠습니까?",
           icon: "warning",
@@ -38,10 +147,11 @@
         }).then((willDelete) => {
           if (willDelete) {
             $.ajax({
-              method: "GET",
+              method: "get",
               url: "/logout",
             })
               .done((result) => {
+                console.log("로그아웃");
                 swal("로그아웃 완료", {
                   icon: "success",
                 }).then((res) => {
@@ -53,6 +163,88 @@
               });
           }
         });
+      });
+      $(".profile-photo").click((e) => {
+        // 프로필 사진 변경
+        swal({
+          title: "Coming Soon...",
+          icon: "warning",
+          dangerMode: true,
+        });
+      });
+    </script>
+    <script>
+      $("#searchBtn").click(() => {
+        let searchValue = $("#searchInput").val();
+        if (searchValue.length == 0) {
+          swal({
+            title: "검색어를 입력해주세요",
+            icon: "warning",
+          });
+        } else {
+          let inputValue = $("#searchInput").val();
+          window.location.replace(`/search?value=${inputValue}`);
+        }
+      });
+      $("#searchInput").on("keypress", (e) => {
+        if (e.key === "Enter") {
+          let searchValue = $("#searchInput").val();
+          if (searchValue.length == 0) {
+            swal({
+              title: "검색어를 입력해주세요",
+              icon: "warning",
+            });
+          } else {
+            let inputValue = $("#searchInput").val();
+            window.location.replace(`/search?value=${inputValue}`);
+          }
+        }
+      });
+      $(".loginCheck").click((e) => {
+        e.preventDefault();
+        swal({
+          title: "글 쓰기는 로그인 후 이용가능합니다.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then((loginCheck) => {
+          if (loginCheck) {
+            $.ajax({
+              method: "GET",
+              url: "/write",
+            })
+              .done((result) => {
+                window.location.href = "/write";
+              })
+              .fail((xhr, code, err) => {
+                console.log(xhr, code, err);
+              });
+          }
+        });
+      });
+    </script>
+    <script>
+      // 프로필 사진 opacity 설정
+      const profileCover = document.querySelector(".profile-cover");
+      const profilePhoto = document.querySelector(".profile-photo");
+
+      profilePhoto.addEventListener("mouseover", (e) => {
+        profileCover.classList.remove("invisible");
+        profileCover.classList.add("visible");
+      });
+
+      profilePhoto.addEventListener("mouseout", (e) => {
+        profileCover.classList.remove("visible");
+        profileCover.classList.add("invisible");
+      });
+      profileCover.addEventListener("mouseover", (e) => {
+        profileCover.classList.remove("invisible");
+        profileCover.classList.add("visible");
+      });
+
+      profileCover.addEventListener("mouseout", (e) => {
+        profileCover.classList.remove("visible");
+        profileCover.classList.add("invisible");
       });
     </script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

@@ -337,6 +337,68 @@ app.put("/noticeEdit", (req, res) => {
   );
 });
 
+// =======  userInfoCheck  =======
+app.post("/userInfoCheck", async (req, res) => {
+  const userName = req.body.userName;
+  console.log(userName);
+
+  const nameRegex = /^[가-힣a-zA-Z\d]{2,15}$/; // 이름 정규식
+  const nameErrorMessage = "특수문자를 제외한 2 ~ 15자 이내로 입력해 주세요.";
+  const duplicateNameErrorMessage = "이미 사용중인 이름입니다.";
+  const okSign = "사용가능한 이름입니다.";
+
+  const existingUserName = await db
+    .collection("login")
+    .findOne({ name: userName });
+
+  if (!nameRegex.test(userName)) {
+    const errorMessage = `<script>alert('${nameErrorMessage}');history.back();</script>`;
+    return res.status(400).send(errorMessage);
+  }
+
+  try {
+    if (existingUserName) {
+      // 닉네임 중복 체크
+      const errorMessage = `<script>alert('${duplicateNameErrorMessage}');history.back();</script>`;
+      return res.status(400).send(errorMessage);
+    } else {
+      const okMessage = `<script>alert("'${userName}' ${okSign}");history.back();</script>`;
+      return res.status(200).send(okMessage);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
+});
+
+// =======  userInfoEdit  =======
+app.put("/userInfoEdit", (req, res) => {
+  db.collection("login").updateOne(
+    { id: req.body.id },
+    {
+      $set: {
+        name: req.body.userName,
+      },
+    },
+    console.log(`${req.body.userName}으로 닉변 완료`),
+    (err, result) => {
+      // res.redirect(`/detail/${req.body.id}`);
+    }
+  );
+  db.collection("post").updateOne(
+    // 작성된 모든 게시물에서 작성자 명 변경
+    { writerId: req.body.id },
+    {
+      $set: {
+        writer: req.body.userName,
+      },
+    },
+    (err, result) => {
+      // res.redirect(`/detail/${req.body.id}`);
+    }
+  );
+});
+
 // =======  signup  =======
 app.get("/signup", (req, res) => {
   res.render("signup.ejs", { user: req.user });
@@ -353,6 +415,7 @@ app.post("/signup", async (req, res) => {
   const pwErrorMessage =
     "비밀번호 형식은 영문 최소 하나의 특수문자를 포함하여 6 ~ 16자 사이여야 합니다.";
   const duplicateIdErrorMessage = "이미 사용중인 아이디입니다.";
+  const duplicateNameErrorMessage = "이미 사용중인 이름입니다.";
 
   const userName = req.body.userName;
   const id = req.body.id;
@@ -374,9 +437,18 @@ app.post("/signup", async (req, res) => {
   }
 
   try {
-    const existingUser = await db.collection("login").findOne({ id: id });
-    if (existingUser) {
+    const existingUserId = await db.collection("login").findOne({ id: id });
+    const existingUserName = await db
+      .collection("login")
+      .findOne({ name: userName });
+
+    if (existingUserId) {
+      // 아이디 중복 체크
       const errorMessage = `<script>alert('${duplicateIdErrorMessage}');history.back();</script>`;
+      return res.status(400).send(errorMessage);
+    } else if (existingUserName) {
+      // 닉네임 중복 체크
+      const errorMessage = `<script>alert('${duplicateNameErrorMessage}');history.back();</script>`;
       return res.status(400).send(errorMessage);
     }
 
@@ -623,6 +695,7 @@ app.delete("/delete", (req, res) => {
       });
     }
   } else {
+    console.log(req.body.writerId, req.user.id);
     console.log("게시물의 작성자가 아닙니다.");
   }
 });
