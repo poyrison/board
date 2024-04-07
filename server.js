@@ -385,12 +385,24 @@ app.put("/userInfoEdit", (req, res) => {
       // res.redirect(`/detail/${req.body.id}`);
     }
   );
-  db.collection("post").updateOne(
+  db.collection("post").updateMany(
     // 작성된 모든 게시물에서 작성자 명 변경
     { writerId: req.body.id },
     {
       $set: {
         writer: req.body.userName,
+      },
+    },
+    (err, result) => {
+      // res.redirect(`/detail/${req.body.id}`);
+    }
+  );
+  db.collection("comment").updateMany(
+    // 작성된 모든 댓글에서 작성자 명 변경
+    { cmtWriter: req.body.userName },
+    {
+      $set: {
+        cmtWriter: req.body.userName,
       },
     },
     (err, result) => {
