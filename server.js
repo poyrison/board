@@ -239,12 +239,14 @@ app.get("/noticeDetail/:id", (req, res) => {
 app.post("/comment", (req, res) => {
   db.collection("counter").findOne({ name: "댓글갯수" }, (err, result) => {
     let totalComment = result.totalComment;
+    console.log(req.body.cmtWriterId);
 
     let saveComment = {
       cmtNo: totalComment + 1,
       cmtContent: req.body.comment,
       parentAddress: parseInt(req.body.id),
       cmtWriter: req.body.cmtWriter,
+      cmtWriterId: req.body.cmtWriterId,
       cmtDate: req.body.cmtTime,
     };
     db.collection("comment").insertOne(saveComment, (err, result) => {
@@ -399,7 +401,7 @@ app.put("/userInfoEdit", (req, res) => {
   );
   db.collection("comment").updateMany(
     // 작성된 모든 댓글에서 작성자 명 변경
-    { cmtWriter: req.body.userName },
+    { cmtWriterId: req.body.id },
     {
       $set: {
         cmtWriter: req.body.userName,

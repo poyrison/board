@@ -215,6 +215,7 @@
               id="cmt-btn"
               data-id="<%= posts._id %>"
               data-writer="<%= user.name %>"
+              data-writer_id="<%= user.id %>"
             >
               작성
             </button>
@@ -402,6 +403,7 @@
                   data: {
                     comment: commentValue,
                     id: e.target.dataset.id,
+                    cmtWriterId: e.target.dataset.writer_id,
                     cmtWriter: e.target.dataset.writer,
                     cmtTime: cmtTime,
                   },
@@ -420,6 +422,7 @@
                   data: {
                     comment: commentValue,
                     id: e.target.dataset.id,
+                    cmtWriterId: e.target.dataset.writer_id,
                     cmtWriter: e.target.dataset.writer,
                     cmtTime: cmtTime,
                   },
