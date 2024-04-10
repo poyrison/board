@@ -9,16 +9,21 @@
 ![HTML5](https://img.shields.io/badge/-HTML5-F05032?style=for-the-badge&logo=html5&logoColor=ffffff)
 ![CSS3](https://img.shields.io/badge/-CSS3-007ACC?style=for-the-badge&logo=css3)
 ![JavaScript](https://img.shields.io/badge/-JavaScript-%23F7DF1C?style=for-the-badge&logo=javascript&logoColor=000000&labelColor=%23F7DF1C&color=%23FFCE5A)
-![React](https://img.shields.io/badge/-React-222222?style=for-the-badge&logo=react)
+![Node.js](https://img.shields.io/badge/-Nodejs-339933?style=for-the-badge&logo=react)
 ![BootStrap](https://img.shields.io/badge/-BootStrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=ffffff)
 ![Git](https://img.shields.io/badge/-Git-F05032?style=for-the-badge&logo=git&logoColor=ffffff)
 
 <hr/>
 
-# 주요 기능
+# 기능 설명
 
-<!-- <img src="/path/to/img.jpg" width="450px" height="300px" title="px(픽셀) 크기 설정" alt="RubberDuck"></img><br/>
-<img src="/path/to/img.jpg" width="40%" height="30%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img> -->
+- 로그인 및 회원가입 -
+- 자동 로그인 기능 - Local Storage사용
+- 이미지 업로딩 기능 - multer 라이브러리 사용
+- 게시물 검색, 페이징 기능
+- MongoDB로 데이터 관리
+- <!-- <img src="/path/to/img.jpg" width="450px" height="300px" title="px(픽셀) 크기 설정" alt="RubberDuck"></img><br/>
+  <img src="/path/to/img.jpg" width="40%" height="30%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img> -->
 
 <!--
 이미지로 설명(GIF, img)

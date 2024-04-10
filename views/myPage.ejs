@@ -151,8 +151,8 @@
               url: "/logout",
             })
               .done((result) => {
-                console.log("로그아웃");
-                swal("로그아웃 완료", {
+                swal({
+                  title: "로그아웃 완료",
                   icon: "success",
                 }).then((res) => {
                   window.location.href = "/";
