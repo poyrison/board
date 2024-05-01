@@ -397,3 +397,10 @@ textarea {
   text-align: center;
   margin-top: 300px;
 }
+/* 모바일 버전 */
+@media only screen and (max-width: 767px) {
+}
+
+/* 태블릿 버전 */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+}

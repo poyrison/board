@@ -11,11 +11,11 @@
   ![HTML5](https://img.shields.io/badge/-HTML5-F05032?style=for-the-badge&logo=html5&logoColor=ffffff)
   ![CSS3](https://img.shields.io/badge/-CSS3-007ACC?style=for-the-badge&logo=css3)
   ![JavaScript](https://img.shields.io/badge/-JavaScript-%23F7DF1C?style=for-the-badge&logo=javascript&logoColor=000000&labelColor=%23F7DF1C&color=%23FFCE5A)
+  ![BootStrap](https://img.shields.io/badge/-BootStrap-%7952B3?style=for-the-badge&logo=BootStrap&logoColor=ffffff&labelColor=7952B3&color=7952B3)
 
 - Back
 
   ![Node.JS](https://img.shields.io/badge/-Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=ffffff)
-  ![AWS](https://img.shields.io/badge/-aws-232F3E?style=for-the-badge&logo=amazon&logoColor=#232F3E)
   ![AWS S3](https://img.shields.io/badge/-AWS_S3-569A31?style=for-the-badge&logo=amazons3&logoColor=ffffff)
   ![AWS EC2](https://img.shields.io/badge/-AWS_EC2-FF9900?style=for-the-badge&logo=amazon&logoColor=ffffff)
 

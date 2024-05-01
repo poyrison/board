@@ -792,7 +792,11 @@ app.get("/myPage", loginCheck, (req, res) => {
 
 // =======  write  =======
 app.get("/write", loginCheck, (req, res) => {
-  res.render("write.ejs", { user: req.user });
+  db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
+    let totalPost = result.totalPost;
+    console.log(totalPost);
+    res.render("write.ejs", { user: req.user, count: totalPost });
+  });
 });
 
 // =======  search  =======
