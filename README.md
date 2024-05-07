@@ -1,4 +1,4 @@
-## 게시판 프로젝트
+## Community Hub
 
 ⚙ 현재 서비스 중인 URL: <http://community-hub.ap-northeast-2.elasticbeanstalk.com/>
 

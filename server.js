@@ -794,7 +794,6 @@ app.get("/myPage", loginCheck, (req, res) => {
 app.get("/write", loginCheck, (req, res) => {
   db.collection("counter").findOne({ name: "게시물갯수" }, (err, result) => {
     let totalPost = result.totalPost;
-    console.log(totalPost);
     res.render("write.ejs", { user: req.user, count: totalPost });
   });
 });
